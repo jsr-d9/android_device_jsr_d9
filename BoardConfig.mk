@@ -23,8 +23,7 @@
 USE_CAMERA_STUB := true
 
 # Inherit from the proprietary version
--include vendor/jsr/d9/BoardConfigVendor.mk
--include vendor/jsr/msm7x27a-common/BoardConfigVendor.mk
+-include vendor/jsr/BoardConfigVendor.mk
 
 BOARD_VENDOR := jsr-qcom
 
@@ -97,7 +96,7 @@ KERNEL_EXTERNAL_MODULES:
 TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
 
 # Partitions
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 471859200
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 571859200
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 984961024
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 13901824
 BOARD_CACHEIMAGE_PARTITION_SIZE := 104857600
@@ -149,6 +148,7 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION := 50000
 BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := $(TARGET_BOARD_PLATFORM)
 
 # Graphics
+#TARGET_HAVE_NEW_GRALLOC := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/jsr/d9/configs/egl.cfg
 #BOARD_EGL_WORKAROUND_BUG_10194508 := true
@@ -174,7 +174,7 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 BOARD_WANTS_EMMC_BOOT := true
 
 # RIL
-BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
+#BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
 
 # Hardware
 BOARD_HARDWARE_CLASS := device/jsr/d9/cmhw
@@ -247,7 +247,7 @@ WIFI_DRIVER_FW_PATH_PARAM := "/data/misc/wifi/fwpath"
 ifeq ($(HOST_OS),linux)
   ifeq ($(TARGET_BUILD_VARIANT),userdebug)
     ifeq ($(WITH_DEXPREOPT),)
-      WITH_DEXPREOPT := true
+#      WITH_DEXPREOPT := true
     endif
   endif
 endif
@@ -259,4 +259,3 @@ EXTENDED_FONT_FOOTPRINT := true
 
 # Enable Minikin text layout engine (will be the default soon)
 USE_MINIKIN := true
- 

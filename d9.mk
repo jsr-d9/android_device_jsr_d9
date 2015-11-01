@@ -158,7 +158,11 @@ PRODUCT_PROPERTY_OVERRIDES += ro.cwm.enable_key_repeat=true
 
 PRODUCT_PROPERTY_OVERRIDES += debug.composition.type=dyn
 PRODUCT_PROPERTY_OVERRIDES += debug.hwc.dynThreshold=1.9
-PRODUCT_PROPERTY_OVERRIDES += ro.bq.gpu_to_cpu_unsupported=1
+PRODUCT_PROPERTY_OVERRIDES += persist.hwc.mdpcomp.enable=false
+PRODUCT_PROPERTY_OVERRIDES += debug.mdpcomp.logs=0
+PRODUCT_PROPERTY_OVERRIDES += debug.gralloc.map_fb_memory=1
+PRODUCT_PROPERTY_OVERRIDES += debug.hwc.fakevsync=1
+#PRODUCT_PROPERTY_OVERRIDES += ro.bq.gpu_to_cpu_unsupported=1
 PRODUCT_PROPERTY_OVERRIDES += ro.max.fling_velocity=4000
 PRODUCT_PROPERTY_OVERRIDES += ro.opengles.version=131072
 PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=240
@@ -250,5 +254,5 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.secure=0
 
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 
-$(call inherit-product, vendor/jsr/msm7x27a-common/msm7x27a-common-vendor.mk)
-$(call inherit-product, vendor/jsr/d9/d9-vendor.mk)
+$(call inherit-product, vendor/jsr/common-vendor.mk)
+$(call inherit-product, vendor/jsr/d9-vendor.mk)
