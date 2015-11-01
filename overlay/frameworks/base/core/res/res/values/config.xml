@@ -21,12 +21,6 @@
      for different hardware and product builds. -->
 <resources>
 
-    <!-- Flag indicating whether the surface flinger has limited
-         alpha compositing functionality in hardware.  If set, the window
-         manager will disable alpha trasformation in animations where not
-         strictly needed. -->
-    <bool name="config_sf_limitedAlpha">true</bool>
-
     <!-- An Array of "[Connection name],[ConnectivityManager.TYPE_xxxx],
          [associated radio-type],[priority],[restoral-timer(ms)],[dependencyMet]  -->
     <!-- the 5th element "resore-time" indicates the number of milliseconds to delay
@@ -112,9 +106,6 @@
     <!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">true</bool>
 
-    <!-- Is the device LTE capable -->
-    <bool name="config_lte_capable">false</bool>
-
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">true</bool>
     
@@ -191,11 +182,7 @@
         <item>0</item>
     </integer-array>
 
-    <!-- Button illumination -->
-    <integer name="config_buttonBrightnessSettingDefault">80</integer>
-    <bool name="config_deviceHasVariableButtonBrightness">true</bool>
-
-    <!-- Hardware "softkeys" present on the device, stored as a bit field.
+    <!-- Hardware 'face' keys present on the device, stored as a bit field.
          This integer should equal the sum of the corresponding value for each
          of the following keys present:
             1 - Home
@@ -208,12 +195,4 @@
         config to 7. -->
     <integer name="config_deviceHardwareKeys">7</integer>
 
-    <!-- Control the behavior when the user long presses the home button.
-            0 - Nothing
-            1 - Recent apps view in SystemUI
-            2 - Launch assist intent
-         This needs to match the constants in
-         policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
-    -->
-    <integer name="config_longPressOnHomeBehavior">1</integer>
 </resources>

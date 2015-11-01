@@ -17,7 +17,7 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # The GPS configuration appropriate for this device.
-#$(call inherit-product, device/common/gps/gps_eu_supl.mk)
+$(call inherit-product, device/common/gps/gps_eu_supl.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/jsr/d9/overlay
 
@@ -25,6 +25,8 @@ PRODUCT_AAPT_CONFIG := normal hdpi
 PRODUCT_AAPT_PREF_CONFIG := hdpi
 
 PRODUCT_TAGS += dalvik.gc.type-precise
+
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/zImage:kernel
 
 # Ramdisk
 PRODUCT_PACKAGES += fstab.qcom
@@ -103,9 +105,9 @@ PRODUCT_COPY_FILES += device/jsr/d9/configs/p2p_supplicant_overlay.conf:system/e
 PRODUCT_COPY_FILES += device/jsr/d9/configs/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
 PRODUCT_COPY_FILES += device/jsr/d9/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
 
-PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml
-PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml
-PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/etc/media_codecs_google_video_le.xml
+#PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml
+#PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml
+#PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/etc/media_codecs_google_video_le.xml
 
 PRODUCT_COPY_FILES += device/jsr/d9/configs/audio_policy.conf:system/etc/audio_policy.conf
 PRODUCT_COPY_FILES += device/jsr/d9/configs/media_codecs.xml:system/etc/media_codecs.xml
