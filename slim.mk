@@ -14,4 +14,21 @@
 # limitations under the License.
 #
 
-PRODUCT_MAKEFILES := $(LOCAL_DIR)/slim_d9.mk
+# Specify phone tech before including full_phone
+$(call inherit-product, vendor/slim/config/gsm.mk)
+
+# Inherit some common CM stuff
+$(call inherit-product, vendor/slim/config/common_full_phone.mk)
+
+# Inherit device configuration
+$(call inherit-product, device/jsr/d9/slim_d9.mk)
+
+# Correct boot animation size for the screen
+TARGET_SCREEN_HEIGHT := 960
+TARGET_SCREEN_WIDTH := 540
+
+# Device name
+PRODUCT_NAME := slim_d9
+PRODUCT_DEVICE := d9
+
+PRODUCT_PACKAGES += Torch

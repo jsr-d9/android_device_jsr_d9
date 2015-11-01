@@ -131,14 +131,15 @@ AUDIO_FEATURE_ENABLED_PROXY_DEVICE := false
 TARGET_PROVIDES_LIBAUDIO := true
 BOARD_USES_LEGACY_ALSA_AUDIO := true
 TARGET_HAS_QACT := true
+TARGET_QCOM_AUDIO_VARIANT := caf
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/jsr/d9/bluetooth
 
 # FM
-#BOARD_HAVE_QCOM_FM := true
-#COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
+BOARD_HAVE_QCOM_FM := true
+COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
 #AUDIO_FEATURE_ENABLED_FM := true
 
 # GPS
@@ -154,7 +155,6 @@ BOARD_EGL_CFG := device/jsr/d9/configs/egl.cfg
 #BOARD_EGL_WORKAROUND_BUG_10194508 := true
 #BOARD_USE_MHEAP_SCREENSHOT := true
 #TARGET_DOESNT_USE_FENCE_SYNC := true
-#TARGET_QCOM_DISPLAY_VARIANT := legacy
 TARGET_QCOM_DISPLAY_VARIANT := caf
 USE_OPENGL_RENDERER := true
 TARGET_DISPLAY_USE_RETIRE_FENCE := true
@@ -174,7 +174,7 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 BOARD_WANTS_EMMC_BOOT := true
 
 # RIL
-#BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
+BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
 
 # Hardware
 BOARD_HARDWARE_CLASS := device/jsr/d9/cmhw
@@ -228,7 +228,7 @@ TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 # Wi-Fi
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_HOSTAPD_DRIVER := NL80211
-#TARGET_CUSTOM_WIFI := ../../device/jsr/d9/libhardware_legacy/wifi/wifi.c
+TARGET_CUSTOM_WIFI := ../../device/jsr/d9/libhardware_legacy/wifi/wifi.c
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_HAS_ATH_WLAN := true
 BOARD_WLAN_DEVICE := ath6kl
@@ -237,25 +237,14 @@ BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 WIFI_DRIVER_FW_PATH_AP := "ap"
 WIFI_DRIVER_FW_PATH_STA := "sta"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
-WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl/ath6kl_sdio.ko"
-WIFI_DRIVER_MODULE_NAME := "wlan"
-WIFI_EXT_MODULE_PATH := "/system/lib/modules/ath6kl/cfg80211.ko"
-WIFI_EXT_MODULE_NAME := "cfg80211"
-WIFI_DRIVER_FW_PATH_PARAM := "/data/misc/wifi/fwpath"
+WIFI_DRIVER_MODULE_PATH := "/data/misc/wifi/load/ar6000.ko"
+WIFI_DRIVER_MODULE_NAME := "ar6000"
+#WIFI_EXT_MODULE_PATH := "/system/lib/modules/ath6kl/cfg80211.ko"
+#WIFI_EXT_MODULE_NAME := "cfg80211"
+#WIFI_DRIVER_FW_PATH_PARAM := "/data/misc/wifi/fwpath"
 
-# Enable dex-preoptimization to speed up first boot sequence
-ifeq ($(HOST_OS),linux)
-  ifeq ($(TARGET_BUILD_VARIANT),userdebug)
-    ifeq ($(WITH_DEXPREOPT),)
-#      WITH_DEXPREOPT := true
-    endif
-  endif
-endif
-WITH_DEXPREOPT_PIC := true
-DONT_DEXPREOPT_PREBUILTS := true
- 
-# Include an expanded selection of fonts
-EXTENDED_FONT_FOOTPRINT := true
-
-# Enable Minikin text layout engine (will be the default soon)
-USE_MINIKIN := true
+# BUILD FLAGS
+#TARGET_USE_O3 := true
+#OPT_MEMORY := true
+#STRICT_ALIASING := false
+#SUPPRESS_UNUSED_WARNING := true

@@ -43,10 +43,10 @@ PRODUCT_PACKAGES += device/jsr/d9/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc
 PRODUCT_PACKAGES += device/jsr/d9/rootdir/init.qcom.ril.sh:root/init.qcom.ril.sh
 
 # FM
-#PRODUCT_PACKAGES += FM2
-#PRODUCT_PACKAGES += FMRecord
-#PRODUCT_PACKAGES += libqcomfm_jni
-#PRODUCT_PACKAGES += qcom.fmradio
+PRODUCT_PACKAGES += FM2
+PRODUCT_PACKAGES += FMRecord
+PRODUCT_PACKAGES += libqcomfm_jni
+PRODUCT_PACKAGES += qcom.fmradio
 
 # Torch
 PRODUCT_PACKAGES += Torch
@@ -55,7 +55,7 @@ PRODUCT_PACKAGES += Torch
 PRODUCT_PACKAGES += audio.a2dp.default
 PRODUCT_PACKAGES += audio.primary.msm7x27a
 PRODUCT_PACKAGES += audio.usb.default
-#PRODUCT_PACKAGES += audio_policy.msm7x27a
+PRODUCT_PACKAGES += audio_policy.msm7x27a
 PRODUCT_PACKAGES += libaudioutils
 
 PRODUCT_PACKAGES += libgenlock
@@ -141,9 +141,9 @@ PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.usb.accessory.
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
 PRODUCT_COPY_FILES += frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
-#PRODUCT_COPY_FILES += packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
-PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
-PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml
+PRODUCT_COPY_FILES += packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml
 
 # Properties
 PRODUCT_PROPERTY_OVERRIDES += headset.hook.delay=500
@@ -250,7 +250,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.adb.secure=0
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.secure=0
 
 
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/full.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full.mk)
 
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 

@@ -1,6 +1,6 @@
 /*
 ** Copyright 2008, The Android Open-Source Project
-** Copyright (c) 2011-2012, The Linux Foundation. All rights reserved.
+** Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -69,8 +69,8 @@ using android::Condition;
 #define MBADRC_DISABLE 0xFFEF
 #define SRS_ENABLE 0x0020
 #define SRS_DISABLE 0xFFDF
-#define LPA_BUFFER_SIZE 480*1024
-#define BUFFER_COUNT 2
+#define LPA_BUFFER_SIZE 256*1024
+#define BUFFER_COUNT 4
 
 #define AGC_ENABLE     0x0001
 #define NS_ENABLE      0x0002
@@ -165,7 +165,7 @@ enum tty_modes {
 #define AUDIO_HW_IN_SAMPLERATE 8000                 // Default audio input sample rate
 #define AUDIO_HW_IN_CHANNELS (AudioSystem::CHANNEL_IN_MONO) // Default audio input channel mask
 #define AUDIO_HW_IN_BUFFERSIZE 2048                 // Default audio input buffer size
-#define AUDIO_HW_IN_FORMAT (AUDIO_FORMAT_PCM_16_BIT)  // Default audio input sample format
+#define AUDIO_HW_IN_FORMAT (AudioSystem::PCM_16_BIT)  // Default audio input sample format
 #ifdef QCOM_VOIP_ENABLED
 #define AUDIO_HW_VOIP_BUFFERSIZE_8K 320
 #define AUDIO_HW_VOIP_BUFFERSIZE_16K 640
@@ -208,30 +208,10 @@ public:
     virtual status_t    setParameters(const String8& keyValuePairs);
     virtual String8     getParameters(const String8& keys);
 
-    virtual status_t setMasterMute(bool muted);
-
-    virtual int createAudioPatch(unsigned int num_sources,
-                                 const struct audio_port_config *sources,
-                                 unsigned int num_sinks,
-                                 const struct audio_port_config *sinks,
-                                 audio_patch_handle_t *handle);
-
-    virtual int releaseAudioPatch(audio_patch_handle_t handle);
-
-    virtual int getAudioPort(struct audio_port *port);
-
-    virtual int setAudioPortConfig(const struct audio_port_config *config);
-
     // create I/O streams
     virtual AudioStreamOut* openOutputStream(
                                 uint32_t devices,
-                                int *format=0,
-                                uint32_t *channels=0,
-                                uint32_t *sampleRate=0,
-                                status_t *status=0);
-    virtual AudioStreamOut* openOutputStreamWithFlags(
-                                uint32_t devices,
-                                audio_output_flags_t flags=(audio_output_flags_t)0,
+                                //audio_output_flags_t flags,
                                 int *format=0,
                                 uint32_t *channels=0,
                                 uint32_t *sampleRate=0,
@@ -258,7 +238,7 @@ public:
 #endif
 protected:
     virtual status_t    dump(int fd, const Vector<String16>& args);
-    uint32_t getMvsMode(int format, int rate);
+    uint32_t getMvsMode(int format);
     uint32_t getMvsRateType(uint32_t MvsMode, uint32_t *rateType);
     status_t setupDeviceforVoipCall(bool value);
 
@@ -270,7 +250,7 @@ private:
     status_t    dumpInternals(int fd, const Vector<String16>& args);
     uint32_t    getInputSampleRate(uint32_t sampleRate);
     bool        checkOutputStandby();
-    status_t    doRouting(AudioStreamInMSM72xx *input, int outputDevice = 0);
+    status_t    doRouting(AudioStreamInMSM72xx *input);
 #ifdef QCOM_FM_ENABLED
     status_t    enableFM();
     status_t    disableFM();
@@ -294,7 +274,7 @@ private:
         // must be 32-bit aligned
         virtual size_t bufferSize() const { return 5248; }
         virtual uint32_t    channels() const { return AudioSystem::CHANNEL_OUT_STEREO; }
-        virtual int         format() const { return AUDIO_FORMAT_PCM_16_BIT; }
+        virtual int         format() const { return AudioSystem::PCM_16_BIT; }
         virtual uint32_t    latency() const { return (1000*AUDIO_HW_NUM_OUT_BUF*(bufferSize()/frameSize()))/sampleRate()+AUDIO_HW_OUT_LATENCY_MS; }
         virtual status_t    setVolume(float left, float right) { return INVALID_OPERATION; }
         virtual ssize_t     write(const void* buffer, size_t bytes);
@@ -305,8 +285,6 @@ private:
         virtual String8     getParameters(const String8& keys);
                 uint32_t    devices() { return mDevices; }
         virtual status_t    getRenderPosition(uint32_t *dspFrames);
-
-        virtual status_t    getPresentationPosition(uint64_t *frames, struct timespec *timestamp);
 
     private:
                 AudioHardware* mHardware;
@@ -330,7 +308,7 @@ private:
         // must be 32-bit aligned - driver only seems to like 4800
         virtual size_t      bufferSize() const { ALOGD(" AudioStreamOutDirect: bufferSize\n"); return 320; }
         virtual uint32_t    channels() const {ALOGD(" AudioStreamOutDirect: channels %d\n",mChannels); return mChannels; }
-        virtual int         format() const {ALOGD(" AudioStreamOutDirect: format\n"); return AUDIO_FORMAT_PCM_16_BIT; }
+        virtual int         format() const {ALOGD(" AudioStreamOutDirect: format\n"); return AudioSystem::PCM_16_BIT; }
         virtual uint32_t    latency() const { return (1000*AUDIO_HW_NUM_OUT_BUF*(bufferSize()/frameSize()))/sampleRate()+AUDIO_HW_OUT_LATENCY_MS; }
         virtual status_t    setVolume(float left, float right) { return INVALID_OPERATION; }
         virtual ssize_t     write(const void* buffer, size_t bytes);
@@ -341,8 +319,6 @@ private:
         virtual String8     getParameters(const String8& keys);
                 uint32_t    devices() { return mDevices; }
         virtual status_t    getRenderPosition(uint32_t *dspFrames);
-
-        virtual status_t    getPresentationPosition(uint64_t *frames, struct timespec *timestamp);
 
     private:
                 AudioHardware* mHardware;
@@ -419,8 +395,6 @@ public:
     virtual status_t    setObserver(void *observer);
     virtual status_t    getBufferInfo(buf_info **buf);
     virtual status_t    isBufferAvailable(int *isAvail);
-
-    virtual status_t    getPresentationPosition(uint64_t *frames, struct timespec *timestamp);
 
     void* memBufferAlloc(int nSize, int32_t *ion_fd);
 
@@ -580,7 +554,6 @@ private:
         virtual unsigned int  getInputFramesLost() const { return 0; }
                 uint32_t    devices() { return mDevices; }
                 int         state() const { return mState; }
-                bool        mSetupDevice;
 
     private:
                 AudioHardware* mHardware;
@@ -634,7 +607,6 @@ private:
             bool mVoipInActive;
             bool mVoipOutActive;
             Mutex       mVoipLock;
-            int mDirectOutrefCnt;
 #endif /*QCOM_VOIP_ENABLED*/
      friend class AudioStreamInMSM72xx;
             Mutex       mLock;

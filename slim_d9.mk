@@ -14,4 +14,16 @@
 # limitations under the License.
 #
 
-PRODUCT_MAKEFILES := $(LOCAL_DIR)/slim_d9.mk
+# Inherit from those products. Most specific first.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+
+# Inherit from d9 device
+$(call inherit-product, device/jsr/d9/d9.mk)
+
+# Set those variables here to overwrite the inherited values.
+PRODUCT_NAME := slim_d9
+PRODUCT_DEVICE := d9
+PRODUCT_BRAND := innos
+PRODUCT_MANUFACTURER := JSR
+PRODUCT_MODEL := D9
+

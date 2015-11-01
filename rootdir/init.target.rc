@@ -84,10 +84,10 @@ on property:persist.sys.thermal.monitor=1
 on property:persist.sys.thermal.monitor=0
     stop thermald
 
-service qosmgrd /system/bin/qosmgr /system/etc/qosmgr_rules.xml
-    user system
-    group system
-    disabled
+#service qosmgrd /system/bin/qosmgr /system/etc/qosmgr_rules.xml
+#    user system
+#    group system
+#    disabled
 
 service mpdecision /system/bin/mpdecision --no_sleep --avg_comp
     class late_start

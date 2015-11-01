@@ -45,7 +45,7 @@ public:
 
         virtual audio_io_handle_t getOutput(AudioSystem::stream_type stream,
                                             uint32_t samplingRate = 0,
-                                            audio_format_t format = AUDIO_FORMAT_DEFAULT,
+                                            uint32_t format = AudioSystem::FORMAT_DEFAULT,
                                             uint32_t channels = 0,
                                             AudioSystem::output_flags flags =
                                                     AudioSystem::OUTPUT_FLAG_INDIRECT,
@@ -57,8 +57,8 @@ public:
                                                            AudioSystem::device_connection_state state,
                                                            const char *device_address);
 
-        virtual void setPhoneState(int state);
-
+		virtual void setPhoneState(int state);
+		
         virtual audio_devices_t getDeviceForVolume(audio_devices_t device);
 
         virtual uint32_t  checkDeviceMuteStrategies(AudioOutputDescriptor *outputDesc,
@@ -67,7 +67,6 @@ public:
         virtual void setForceUse(AudioSystem::force_use usage, AudioSystem::forced_config config);
 protected:
         virtual audio_devices_t getDeviceForStrategy(routing_strategy strategy, bool fromCache = true);
-
         fm_modes fmMode;
         bool pendingForceNone;
 
@@ -88,21 +87,21 @@ protected:
         virtual AudioPolicyManagerBase::IOProfile* getProfileForDirectOutput(
                                                      audio_devices_t device,
                                                      uint32_t samplingRate,
-                                                     audio_format_t format,
-                                                     audio_channel_mask_t channelMask,
+                                                     uint32_t format,
+                                                     uint32_t channelMask,
                                                      audio_output_flags_t flags);
 
 
         bool    isCompatibleProfile(AudioPolicyManagerBase::IOProfile *profile,
                                     audio_devices_t device,
                                     uint32_t samplingRate,
-                                    audio_format_t format,
-                                    audio_channel_mask_t channelMask,
+                                    uint32_t format,
+                                    uint32_t channelMask,
                                     audio_output_flags_t flags);
         // check that volume change is permitted, compute and send new volume to audio hardware
         status_t checkAndSetVolume(int stream, int index, audio_io_handle_t output, audio_devices_t device, int delayMs = 0, bool force = false);
         status_t stopInput(audio_io_handle_t input);
-        // select input device corresponding to requested audio source
+		// select input device corresponding to requested audio source
         virtual audio_devices_t getDeviceForInputSource(int inputSource);
 
         virtual uint32_t setOutputDevice(audio_io_handle_t output,
