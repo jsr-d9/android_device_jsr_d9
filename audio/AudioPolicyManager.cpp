@@ -66,7 +66,7 @@ extern "C" void destroyAudioPolicyManager(AudioPolicyInterface *interface)
 
 audio_io_handle_t AudioPolicyManager::getOutput(AudioSystem::stream_type stream,
                                     uint32_t samplingRate,
-                                    audio_format_t format,
+                                    uint32_t format,
                                     uint32_t channelMask,
                                     AudioSystem::output_flags flags,
                                     const audio_offload_info_t *offloadInfo)
@@ -224,7 +224,7 @@ void AudioPolicyManager::releaseOutput(audio_io_handle_t output)
                                                               desc->mDirectOpenCount, output);
             return;
         }
-        if ((--desc->mDirectOpenCount == 0) || ((desc->mFlags & AUDIO_OUTPUT_FLAG_LPA || desc->mFlags & AUDIO_OUTPUT_FLAG_TUNNEL ||
+        if ((--desc->mDirectOpenCount == 0) && ((desc->mFlags & AUDIO_OUTPUT_FLAG_LPA || desc->mFlags & AUDIO_OUTPUT_FLAG_TUNNEL ||
                 desc->mFlags & AUDIO_OUTPUT_FLAG_VOIP_RX))) {
             ALOGV("releaseOutput() closing output");
             closeOutput(output);
@@ -322,6 +322,8 @@ audio_devices_t AudioPolicyManager::getDeviceForStrategy(routing_strategy strate
             if (device) break;
             device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_WIRED_HEADSET;
             if (device) break;
+            device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_USB_ACCESSORY;
+            if (device) break;
             device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_USB_DEVICE;
             if (device) break;
             device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET;
@@ -347,6 +349,8 @@ audio_devices_t AudioPolicyManager::getDeviceForStrategy(routing_strategy strate
                 device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_SPEAKER;
                 if (device) break;
             }
+            device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_USB_ACCESSORY;
+            if (device) break;
             device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_USB_DEVICE;
             if (device) break;
             device = mAvailableOutputDevices & AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET;
@@ -460,7 +464,7 @@ audio_devices_t AudioPolicyManager::getDeviceForStrategy(routing_strategy strate
               device = getDeviceForStrategy(STRATEGY_PHONE);
               ALOGV("getDeviceForStrategy() incompatible media and phone devices");
           }
-      }
+	  }
       if (device == AUDIO_DEVICE_NONE) {
         ALOGE("getDeviceForStrategy() no device found for STRATEGY_MEDIA");
       }
@@ -642,8 +646,8 @@ status_t AudioPolicyManager::setDeviceConnectionState(audio_devices_t device,
                     mScoDeviceAddress = String8(device_address, MAX_DEVICE_ADDRESS_LEN);
                 } else if (mHasUsb && audio_is_usb_device(device)) {
                     // handle USB device connection
-                    mUsbOutCardAndDevice = String8(device_address, MAX_DEVICE_ADDRESS_LEN);
-                    paramStr = mUsbOutCardAndDevice;
+                    mUsbCardAndDevice = String8(device_address, MAX_DEVICE_ADDRESS_LEN);
+                    paramStr = mUsbCardAndDevice;
                 }
                 if (!paramStr.isEmpty()) {
                     for (size_t i = 0; i < outputs.size(); i++) {
@@ -661,8 +665,7 @@ status_t AudioPolicyManager::setDeviceConnectionState(audio_devices_t device,
 
                 ALOGD("turning off Fm device in Mode %d",getFMMode());
                 setFmMode(FM_NONE);
-                if (pendingForceNone)
-                    setForceUse(AudioSystem::FOR_MEDIA, AudioSystem::FORCE_NONE);
+				setForceUse(AudioSystem::FOR_MEDIA, AudioSystem::FORCE_NONE);
                 newDevice = getDeviceForStrategy(STRATEGY_MEDIA, false);
                 if((newDevice & AudioSystem::DEVICE_OUT_BLUETOOTH_A2DP) ||
 				  (newDevice & AudioSystem::DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES)||
@@ -691,7 +694,7 @@ status_t AudioPolicyManager::setDeviceConnectionState(audio_devices_t device,
                 mScoDeviceAddress = "";
             } else if (mHasUsb && audio_is_usb_device(device)) {
                 // handle USB device disconnection
-                mUsbOutCardAndDevice = "";
+                mUsbCardAndDevice = "";
             }
         } break;
 
@@ -967,12 +970,7 @@ void AudioPolicyManager::setForceUse(AudioSystem::force_use usage, AudioSystem::
             ALOGW("setForceUse() invalid config %d for FOR_MEDIA", config);
             return;
         }
-        if (getFMMode() == FM_DIGITAL && config == AudioSystem::FORCE_NONE) {
-            ALOGE("donot change config as FM Mode is still digital");
-            pendingForceNone = true;
-            return;
-        } else {
-          pendingForceNone = false;
+        {
           mForceUse[usage] = config;
         }
         break;
@@ -1041,8 +1039,8 @@ void AudioPolicyManager::setForceUse(AudioSystem::force_use usage, AudioSystem::
 AudioPolicyManagerBase::IOProfile *AudioPolicyManager::getProfileForDirectOutput(
                                                                audio_devices_t device,
                                                                uint32_t samplingRate,
-                                                               audio_format_t format,
-                                                               audio_channel_mask_t channelMask,
+                                                               uint32_t format,
+                                                               uint32_t channelMask,
                                                                audio_output_flags_t flags)
 {
     if( !((flags & AUDIO_OUTPUT_FLAG_LPA)   ||
@@ -1056,21 +1054,11 @@ AudioPolicyManagerBase::IOProfile *AudioPolicyManager::getProfileForDirectOutput
         }
         for (size_t j = 0; j < mHwModules[i]->mOutputProfiles.size(); j++) {
            AudioPolicyManagerBase::IOProfile *profile = mHwModules[i]->mOutputProfiles[j];
-            if (flags & AUDIO_OUTPUT_FLAG_COMPRESS_OFFLOAD) {
-                if (profile->isCompatibleProfile(device, samplingRate, format,
+            if (isCompatibleProfile(profile, device, samplingRate, format,
                                            channelMask,
-                                           AUDIO_OUTPUT_FLAG_COMPRESS_OFFLOAD)) {
-                    if (mAvailableOutputDevices & profile->mSupportedDevices) {
-                        return mHwModules[i]->mOutputProfiles[j];
-                    }
-                }
-            } else if (flags & AUDIO_OUTPUT_FLAG_DIRECT) {
-                if (profile->isCompatibleProfile(device, samplingRate, format,
-                                           channelMask,
-                                           AUDIO_OUTPUT_FLAG_DIRECT)) {
-                    if (mAvailableOutputDevices & profile->mSupportedDevices) {
-                        return mHwModules[i]->mOutputProfiles[j];
-                    }
+                                           flags)) {
+                if (mAvailableOutputDevices & profile->mSupportedDevices) {
+                    return mHwModules[i]->mOutputProfiles[j];
                 }
             }
         }
@@ -1082,8 +1070,8 @@ AudioPolicyManagerBase::IOProfile *AudioPolicyManager::getProfileForDirectOutput
 bool AudioPolicyManager::isCompatibleProfile(AudioPolicyManagerBase::IOProfile *profile,
                                              audio_devices_t device,
                                              uint32_t samplingRate,
-                                             audio_format_t format,
-                                             audio_channel_mask_t channelMask,
+                                             uint32_t format,
+                                             uint32_t channelMask,
                                             audio_output_flags_t flags)
 {
     if ((profile->mSupportedDevices & device) != device) {
@@ -1360,8 +1348,8 @@ audio_devices_t AudioPolicyManager::getDeviceForInputSource(int inputSource)
         }
         break;
     case AUDIO_SOURCE_VOICE_COMMUNICATION:
-        device = AudioSystem::DEVICE_IN_COMMUNICATION;
-        break;
+         device = AUDIO_DEVICE_IN_COMMUNICATION;
+         break;
     case AUDIO_SOURCE_CAMCORDER:
         if (mAvailableInputDevices & AUDIO_DEVICE_IN_BACK_MIC) {
             device = AUDIO_DEVICE_IN_BACK_MIC;
@@ -1442,17 +1430,18 @@ status_t AudioPolicyManager::startOutput(audio_io_handle_t output,
                 }
             }
         }
+    uint32_t NewDevice = (uint32_t)AudioPolicyManagerBase::getNewDevice(output, true);
 #ifdef QCOM_FM_ENABLED
     if((stream == AudioSystem::SYSTEM) && (FM_ANALOG == getFMMode())
-    && (newDevice == (audio_devices_t)AudioSystem::DEVICE_OUT_FM))
+    && (NewDevice == (audio_devices_t)AudioSystem::DEVICE_OUT_FM))
     {
-        newDevice = (audio_devices_t)((uint32_t)newDevice | AudioSystem::DEVICE_OUT_WIRED_HEADSET);
-        ALOGE("Selecting AnlgFM + CODEC device %x",newDevice);
-        muteWaitMs = setOutputDevice(output, (audio_devices_t)newDevice, true);
+        NewDevice = (audio_devices_t)((uint32_t)newDevice | AudioSystem::DEVICE_OUT_WIRED_HEADSET);
+        ALOGE("Selecting AnlgFM + CODEC device %x",NewDevice);
+        muteWaitMs = setOutputDevice(output, (audio_devices_t)NewDevice, true);
     }
     else
 #endif
-        muteWaitMs = setOutputDevice(output, (audio_devices_t)newDevice, force);
+        muteWaitMs = setOutputDevice(output, (audio_devices_t)NewDevice, force);
 
         // handle special case for sonification while in call
         if (isInCall()) {
@@ -1572,6 +1561,7 @@ status_t AudioPolicyManager::stopInput(audio_io_handle_t input)
         return NO_ERROR;
     }
 }
+
 
 uint32_t AudioPolicyManager::setOutputDevice(audio_io_handle_t output, audio_devices_t device, bool force, int delayMs)
 {

@@ -229,12 +229,7 @@ void gr_font_size(int *x, int *y)
     *y = gr_font->cheight;
 }
 
-int gr_text(int x, int y, const char *s, ...)
-{
-    return gr_text_impl(x, y, s, 0);
-}
-
-int gr_text_impl(int x, int y, const char *s, int bold)
+int gr_text(int x, int y, const char *s, int bold)
 {
     GGLContext *gl = gr_context;
     GRFont *font = gr_font;
@@ -449,11 +444,4 @@ void gr_fb_blank(bool blank)
     if (ret < 0)
         perror("ioctl(): blank");
 #endif
-}
-
-// These are new graphics functions from 5.0 that were not available in
-// 4.4 that are required by charger and healthd
-void gr_clear()
-{
-	return;
 }

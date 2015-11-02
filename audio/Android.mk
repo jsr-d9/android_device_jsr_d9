@@ -3,6 +3,7 @@
 #AUDIO_POLICY_TEST := true
 #ENABLE_AUDIO_DUMP := true
 
+TARGET_HAS_QACT := true
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -22,7 +23,7 @@ ifeq ($(BOARD_HAVE_BLUETOOTH),true)
   LOCAL_CFLAGS += -DWITH_A2DP
 endif
 
-ifeq ($(AUDIO_FEATURE_ENABLED_FM),true)
+ifeq ($(BOARD_HAVE_QCOM_FM),true)
   LOCAL_CFLAGS += -DWITH_QCOM_FM
   LOCAL_CFLAGS += -DQCOM_FM_ENABLED
 endif
@@ -41,12 +42,7 @@ LOCAL_CFLAGS += -DQCOM_TUNNEL_LPA_ENABLED
 LOCAL_SHARED_LIBRARIES := \
     libcutils       \
     libutils        \
-    libmedia        \
-    libaudioalsa
-
-# hack for prebuilt
-$(shell mkdir -p $(OUT)/obj/SHARED_LIBRARIES/libaudioalsa_intermediates/)
-$(shell touch $(OUT)/obj/SHARED_LIBRARIES/libaudioalsa_intermediates/export_includes)
+    libmedia
 
 ifneq ($(TARGET_SIMULATOR),true)
 LOCAL_SHARED_LIBRARIES += libdl
@@ -84,7 +80,6 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 include $(BUILD_SHARED_LIBRARY)
 
 # The audio policy is implemented on top of legacy policy code
-ifeq ($(USE_LEGACY_AUDIO_POLICY), 1)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
@@ -109,10 +104,14 @@ ifeq ($(BOARD_HAVE_BLUETOOTH),true)
   LOCAL_CFLAGS += -DWITH_A2DP
 endif
 
+ifeq ($(BOARD_HAVE_QCOM_FM),true)
+  LOCAL_CFLAGS += -DQCOM_FM_ENABLED
+endif
+
 LOCAL_C_INCLUDES := hardware/libhardware_legacy/audio
 
 LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
 include $(BUILD_SHARED_LIBRARY)
-endif
+

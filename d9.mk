@@ -55,7 +55,7 @@ PRODUCT_PACKAGES += Torch
 PRODUCT_PACKAGES += audio.a2dp.default
 PRODUCT_PACKAGES += audio.primary.msm7x27a
 PRODUCT_PACKAGES += audio.usb.default
-#PRODUCT_PACKAGES += audio_policy.msm7x27a
+PRODUCT_PACKAGES += audio_policy.msm7x27a
 PRODUCT_PACKAGES += libaudioutils
 
 PRODUCT_PACKAGES += libgenlock
@@ -103,16 +103,16 @@ PRODUCT_COPY_FILES += device/jsr/d9/configs/p2p_supplicant_overlay.conf:system/e
 PRODUCT_COPY_FILES += device/jsr/d9/configs/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
 PRODUCT_COPY_FILES += device/jsr/d9/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
 
-PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml
-PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml
-PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/etc/media_codecs_google_video_le.xml
+#PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml
+#PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml
+#PRODUCT_COPY_FILES += frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/etc/media_codecs_google_video_le.xml
 
 PRODUCT_COPY_FILES += device/jsr/d9/configs/audio_policy.conf:system/etc/audio_policy.conf
 PRODUCT_COPY_FILES += device/jsr/d9/configs/media_codecs.xml:system/etc/media_codecs.xml
 PRODUCT_COPY_FILES += device/jsr/d9/configs/media_profiles.xml:system/etc/media_profiles.xml
 
-PRODUCT_COPY_FILES += device/jsr/d9/idc/qwerty.idc:system/usr/idc/qwerty.idc
-PRODUCT_COPY_FILES += device/jsr/d9/idc/qwerty2.idc:system/usr/idc/qwerty2.idc
+#PRODUCT_COPY_FILES += device/jsr/d9/idc/qwerty.idc:system/usr/idc/qwerty.idc
+#PRODUCT_COPY_FILES += device/jsr/d9/idc/qwerty2.idc:system/usr/idc/qwerty2.idc
 PRODUCT_COPY_FILES += device/jsr/d9/keychars/7x27a_kp.kcm:system/usr/keychars/7x27a_kp.kcm
 PRODUCT_COPY_FILES += device/jsr/d9/keylayout/7x27a_kp.kl:system/usr/keylayout/7x27a_kp.kl
 PRODUCT_COPY_FILES += device/jsr/d9/keylayout/surf_keypad.kl:system/usr/keylayout/surf_keypad.kl
@@ -142,8 +142,8 @@ PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.wifi.xml:syste
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
 PRODUCT_COPY_FILES += frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
 #PRODUCT_COPY_FILES += packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
-PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
-PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml
+#PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+#PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml
 
 # Properties
 PRODUCT_PROPERTY_OVERRIDES += headset.hook.delay=500
@@ -169,6 +169,7 @@ PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=240
 
 PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapgrowthlimit=48m
 PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapsize=128m
+PRODUCT_PROPERTY_OVERRIDES += ro.config.low_ram=true
 
 PRODUCT_PROPERTY_OVERRIDES += com.qc.hardware=true
 PRODUCT_PROPERTY_OVERRIDES += dev.pm.dyn_sample_period=700000

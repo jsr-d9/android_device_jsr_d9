@@ -76,11 +76,12 @@ ARCH_ARM_HAVE_32_BYTE_CACHE_LINES := true
 TARGET_GRALLOC_USES_ASHMEM := true
 
 # Kernel
-TARGET_KERNEL_CONFIG := jsr_d9_defconfig
-BOARD_KERNEL_BASE := 0x00200000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive user_debug=31 debug ignore_loglevel pmemlog=3 reboot=2
-BOARD_PAGE_SIZE := 2048
 TARGET_KERNEL_SOURCE := kernel/jsr/msm8625
+TARGET_KERNEL_CONFIG := jsr_d9_defconfig
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.selinux=permissive user_debug=31 debug ignore_loglevel pmemlog=3 reboot=2
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_KERNEL_BASE := 0x00000000
+BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00208000 --ramdisk_offset 0x01500000 --tags_offset 0x00200100 
 
 # These currently have to go to the ramdisk for wlan_detect to pick them up.
 # Hopefully they can join their friends at $(KERNEL_MODULES_OUT) soon. :(
@@ -130,7 +131,8 @@ AUDIO_FEATURE_ENABLED_PROXY_DEVICE := false
 # Audio
 TARGET_PROVIDES_LIBAUDIO := true
 BOARD_USES_LEGACY_ALSA_AUDIO := true
-TARGET_HAS_QACT := true
+TARGET_QCOM_AUDIO_VARIANT := caf
+#TARGET_HAS_QACT := true
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -163,7 +165,7 @@ HWUI_COMPILE_FOR_PERF := true
 # Camera
 #COMMON_GLOBAL_CFLAGS += -DMR0_CAMERA_BLOB -DNEEDS_VECTORIMPL_SYMBOLS
 USE_DEVICE_SPECIFIC_CAMERA := true
-#USE_CAMERA_STUB :=false
+#USE_CAMERA_STUB := false
 
 # Other
 TARGET_BOOTANIMATION_PRELOAD := true
@@ -174,7 +176,7 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 BOARD_WANTS_EMMC_BOOT := true
 
 # RIL
-#BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
+BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
 
 # Hardware
 BOARD_HARDWARE_CLASS := device/jsr/d9/cmhw
@@ -185,7 +187,6 @@ TARGET_PROVIDES_LIBLIGHTS := true
 # Media
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := true
 #TARGET_ENABLE_AV_ENHANCEMENTS := false
-#TARGET_QCOM_MEDIA_VARIANT := legacy
 TARGET_QCOM_MEDIA_VARIANT := caf
 #TARGET_QCOM_LEGACY_MMPARSER := true
 COMMON_GLOBAL_CFLAGS += -DQCOM_NO_SECURE_PLAYBACK
@@ -196,6 +197,7 @@ BOARD_SEPOLICY_DIRS += device/jsr/d9/sepolicy
 
 BOARD_SEPOLICY_UNION += file_contexts
 BOARD_SEPOLICY_UNION += app.te
+BOARD_SEPOLICY_UNION += device.te
 BOARD_SEPOLICY_UNION += file.te
 
 # USB
@@ -211,8 +213,8 @@ TARGET_USE_CUSTOM_SECOND_LUN_NUM := 1
 
 # Recovery
 #TARGET_NO_RECOVERY := true
-#TARGET_NO_SEPARATE_RECOVERY := false
-#RECOVERY_VARIANT := cm
+TARGET_NO_SEPARATE_RECOVERY := false
+RECOVERY_VARIANT := cm
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_RECOVERY_SWIPE := true
 BOARD_SUPPRESS_EMMC_WIPE := true
@@ -237,25 +239,14 @@ BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 WIFI_DRIVER_FW_PATH_AP := "ap"
 WIFI_DRIVER_FW_PATH_STA := "sta"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
-WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl/ath6kl_sdio.ko"
-WIFI_DRIVER_MODULE_NAME := "wlan"
-WIFI_EXT_MODULE_PATH := "/system/lib/modules/ath6kl/cfg80211.ko"
-WIFI_EXT_MODULE_NAME := "cfg80211"
-WIFI_DRIVER_FW_PATH_PARAM := "/data/misc/wifi/fwpath"
-
-# Enable dex-preoptimization to speed up first boot sequence
-ifeq ($(HOST_OS),linux)
-  ifeq ($(TARGET_BUILD_VARIANT),userdebug)
-    ifeq ($(WITH_DEXPREOPT),)
-#      WITH_DEXPREOPT := true
-    endif
-  endif
-endif
-WITH_DEXPREOPT_PIC := true
-DONT_DEXPREOPT_PREBUILTS := true
+WIFI_DRIVER_MODULE_PATH := "/data/misc/wifi/load/ar6000.ko"
+WIFI_DRIVER_MODULE_NAME := "ar6000"
+#WIFI_EXT_MODULE_PATH := "/system/lib/modules/ath6kl/cfg80211.ko"
+#WIFI_EXT_MODULE_NAME := "cfg80211"
+#WIFI_DRIVER_FW_PATH_PARAM := "/data/misc/wifi/fwpath"
  
 # Include an expanded selection of fonts
-EXTENDED_FONT_FOOTPRINT := true
+#EXTENDED_FONT_FOOTPRINT := true
 
 # Enable Minikin text layout engine (will be the default soon)
-USE_MINIKIN := true
+#USE_MINIKIN := true
