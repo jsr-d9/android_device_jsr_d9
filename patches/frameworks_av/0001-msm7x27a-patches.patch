@@ -1,0 +1,91 @@
+From 6d7c9f366899d4e945831f84211779054d0dc273 Mon Sep 17 00:00:00 2001
+From: remittor <remittor@gmail.com>
+Date: Mon, 2 Nov 2015 12:09:22 +0300
+Subject: [PATCH] msm7x27a patches
+
+---
+ media/libmediaplayerservice/StagefrightRecorder.cpp | 4 ++++
+ media/libstagefright/ACodec.cpp                     | 4 ++++
+ media/libstagefright/Android.mk                     | 5 +++++
+ media/libstagefright/CameraSource.cpp               | 2 ++
+ 4 files changed, 15 insertions(+)
+
+diff --git a/media/libmediaplayerservice/StagefrightRecorder.cpp b/media/libmediaplayerservice/StagefrightRecorder.cpp
+index 8c4f34e..f9c0306 100644
+--- a/media/libmediaplayerservice/StagefrightRecorder.cpp
++++ b/media/libmediaplayerservice/StagefrightRecorder.cpp
+@@ -1307,6 +1307,9 @@ void StagefrightRecorder::clipVideoFrameWidth() {
+ 
+ status_t StagefrightRecorder::checkVideoEncoderCapabilities(
+         bool *supportsCameraSourceMetaDataMode) {
++#ifdef USE_SUBMIT_ONE_INPUT_BUFFER
++    *supportsCameraSourceMetaDataMode = true;
++#else
+     /* hardware codecs must support camera source meta data mode */
+     Vector<CodecCapabilities> codecs;
+     OMXClient client;
+@@ -1318,6 +1321,7 @@ status_t StagefrightRecorder::checkVideoEncoderCapabilities(
+              mVideoEncoder == VIDEO_ENCODER_H264 ? MEDIA_MIMETYPE_VIDEO_AVC : ""),
+             false /* decoder */, true /* hwCodec */, &codecs);
+     *supportsCameraSourceMetaDataMode = codecs.size() > 0;
++#endif
+     ALOGV("encoder %s camera source meta-data mode",
+             *supportsCameraSourceMetaDataMode ? "supports" : "DOES NOT SUPPORT");
+ 
+diff --git a/media/libstagefright/ACodec.cpp b/media/libstagefright/ACodec.cpp
+index 49ad086..85118b7 100755
+--- a/media/libstagefright/ACodec.cpp
++++ b/media/libstagefright/ACodec.cpp
+@@ -495,11 +495,15 @@ status_t ACodec::allocateBuffersOnPort(OMX_U32 portIndex) {
+ 
+     status_t err;
+     if (mNativeWindow != NULL && portIndex == kPortIndexOutput) {
++#ifdef NO_METADATA_IN_VIDEO_BUFFERS
++        err = allocateOutputBuffersFromNativeWindow();
++#else
+         if (mStoreMetaDataInOutputBuffers) {
+             err = allocateOutputMetaDataBuffers();
+         } else {
+             err = allocateOutputBuffersFromNativeWindow();
+         }
++#endif
+     } else {
+         OMX_PARAM_PORTDEFINITIONTYPE def;
+         InitOMXParams(&def);
+diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
+index af55235..0fa702e 100644
+--- a/media/libstagefright/Android.mk
++++ b/media/libstagefright/Android.mk
+@@ -241,6 +241,11 @@ ifdef DOLBY_UDC_MULTICHANNEL
+   LOCAL_CFLAGS += -DDOLBY_UDC_MULTICHANNEL
+ endif #DOLBY_UDC_MULTICHANNEL
+ 
++ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
++    LOCAL_CFLAGS += -DUSE_SUBMIT_ONE_INPUT_BUFFER
++    LOCAL_CFLAGS += -DNO_METADATA_IN_VIDEO_BUFFERS
++endif
++
+ LOCAL_MODULE:= libstagefright
+ 
+ LOCAL_MODULE_TAGS := optional
+diff --git a/media/libstagefright/CameraSource.cpp b/media/libstagefright/CameraSource.cpp
+index 4978c08..eb5a8e5 100644
+--- a/media/libstagefright/CameraSource.cpp
++++ b/media/libstagefright/CameraSource.cpp
+@@ -583,11 +583,13 @@ status_t CameraSource::initWithCameraAccess(
+     // By default, do not store metadata in video buffers
+     mIsMetaDataStoredInVideoBuffers = false;
+     mCamera->storeMetaDataInBuffers(false);
++#ifndef NO_METADATA_IN_VIDEO_BUFFERS
+     if (storeMetaDataInVideoBuffers) {
+         if (OK == mCamera->storeMetaDataInBuffers(true)) {
+             mIsMetaDataStoredInVideoBuffers = true;
+         }
+     }
++#endif
+ 
+     int64_t glitchDurationUs = (1000000LL / mVideoFrameRate);
+     if (glitchDurationUs > mGlitchDurationThresholdUs) {
+-- 
+1.9.5.msysgit.0
+

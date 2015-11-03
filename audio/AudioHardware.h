@@ -30,7 +30,7 @@
 
 extern "C" {
 #include <linux/msm_audio.h>
-#include <linux/ion.h>
+#include <linux/msm_ion.h>
 #include <linux/msm_audio_voicememo.h>
 #ifdef QCOM_VOIP_ENABLED
 #include <linux/msm_audio_mvs.h>
@@ -69,8 +69,8 @@ using android::Condition;
 #define MBADRC_DISABLE 0xFFEF
 #define SRS_ENABLE 0x0020
 #define SRS_DISABLE 0xFFDF
-#define LPA_BUFFER_SIZE 480*1024
-#define BUFFER_COUNT 2
+#define LPA_BUFFER_SIZE 256*1024
+#define BUFFER_COUNT 4
 
 #define AGC_ENABLE     0x0001
 #define NS_ENABLE      0x0002

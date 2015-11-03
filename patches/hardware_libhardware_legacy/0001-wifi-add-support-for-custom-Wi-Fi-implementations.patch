@@ -1,0 +1,33 @@
+From 8371505ceb611fd0af6f790e6e5e3bbfab7ccbb1 Mon Sep 17 00:00:00 2001
+From: remittor <remittor@gmail.com>
+Date: Mon, 2 Nov 2015 14:58:49 +0300
+Subject: [PATCH] wifi: add support for custom Wi-Fi implementations
+
+---
+ wifi/Android.mk | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/wifi/Android.mk b/wifi/Android.mk
+index c7bdc59..d6b3ecc 100644
+--- a/wifi/Android.mk
++++ b/wifi/Android.mk
+@@ -40,7 +40,15 @@ ifdef WIFI_EXT_MODULE_NAME
+ LOCAL_CFLAGS += -DWIFI_EXT_MODULE_NAME=\"$(WIFI_EXT_MODULE_NAME)\"
+ endif
+ 
+-LOCAL_SRC_FILES += wifi/wifi.c
++ifdef WIFI_DRIVER_IFACE_NAME
++LOCAL_CFLAGS += -DWIFI_DRIVER_IFACE_NAME=\"$(WIFI_DRIVER_IFACE_NAME)\"
++endif
++
++ifeq ($(TARGET_CUSTOM_WIFI),)
++    LOCAL_SRC_FILES += wifi/wifi.c
++else
++    LOCAL_SRC_FILES += $(TARGET_CUSTOM_WIFI)
++endif
+ 
+ ifeq ($(BOARD_HAVE_SAMSUNG_WIFI),true)
+ LOCAL_CFLAGS += -DSAMSUNG_WIFI
+-- 
+1.9.5.msysgit.0
+

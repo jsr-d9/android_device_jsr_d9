@@ -1,0 +1,86 @@
+From c0861691b754570084e4d85236c82882143fc6cb Mon Sep 17 00:00:00 2001
+From: RonGokhale <cips173@gmail.com>
+Date: Tue, 1 Jul 2014 19:44:18 +0530
+Subject: [PATCH 097/100] hwc: bring back fb support for primary for mdp303.
+
+Change-Id: I98cf0fdae6b9b1100c97ac319ab1c321f55fe507
+---
+ libhwcomposer/hwc.cpp       |  5 +++++
+ libhwcomposer/hwc_utils.cpp | 11 +++++++++++
+ libhwcomposer/hwc_utils.h   |  6 ++++++
+ 3 files changed, 22 insertions(+)
+
+diff --git a/libhwcomposer/hwc.cpp b/libhwcomposer/hwc.cpp
+index 8ce7ea9..ed719a5 100644
+--- a/libhwcomposer/hwc.cpp
++++ b/libhwcomposer/hwc.cpp
+@@ -535,8 +535,13 @@ static int hwc_set_primary(hwc_context_t *ctx, hwc_display_contents_1_t* list) {
+             }
+         }
+ 
++#ifdef USE_MDP3
++        if (ctx->mFbDev->post(ctx->mFbDev, fbLayer->handle)) {
++             ALOGE("%s: ctx->mFbDev->post fail!", __FUNCTION__);
++#else
+         if(!Overlay::displayCommit(ctx->dpyAttr[dpy].fd)) {
+             ALOGE("%s: display commit fail for %d dpy!", __FUNCTION__, dpy);
++#endif
+             ret = -1;
+         }
+     }
+diff --git a/libhwcomposer/hwc_utils.cpp b/libhwcomposer/hwc_utils.cpp
+index 57e9509..bd5619c 100644
+--- a/libhwcomposer/hwc_utils.cpp
++++ b/libhwcomposer/hwc_utils.cpp
+@@ -36,6 +36,9 @@
+ #include "hwc_qclient.h"
+ #include "QService.h"
+ #include "comptype.h"
++#ifdef USE_MDP3
++#include <fb_priv.h>
++#endif
+ 
+ using namespace qClient;
+ using namespace qService;
+@@ -56,6 +59,14 @@ static int openFramebufferDevice(hwc_context_t *ctx)
+         ALOGE("%s: Error Opening FB : %s", __FUNCTION__, strerror(errno));
+         return -errno;
+     }
++#ifdef USE_MDP3
++    hw_module_t const *module;
++    if (hw_get_module(GRALLOC_HARDWARE_MODULE_ID, &module) == 0) {
++        framebuffer_open(module, &(ctx->mFbDev));
++        private_module_t* m = reinterpret_cast<private_module_t*>(
++                ctx->mFbDev->common.module);
++    }
++#endif
+ 
+     if (ioctl(fb_fd, FBIOGET_VSCREENINFO, &info) == -1) {
+         ALOGE("%s:Error in ioctl FBIOGET_VSCREENINFO: %s", __FUNCTION__,
+diff --git a/libhwcomposer/hwc_utils.h b/libhwcomposer/hwc_utils.h
+index a9eb06f..e4cf23d 100644
+--- a/libhwcomposer/hwc_utils.h
++++ b/libhwcomposer/hwc_utils.h
+@@ -42,6 +42,9 @@
+ #define DAEMON_SOCKET "pps"
+ //Fwrd decls
+ struct hwc_context_t;
++#ifdef USE_MDP3
++struct framebuffer_device_t;
++#endif
+ 
+ namespace ovutils = overlay::utils;
+ 
+@@ -396,6 +399,9 @@ inline void swap(T& a, T& b) {
+ struct hwc_context_t {
+     hwc_composer_device_1_t device;
+     const hwc_procs_t* proc;
++#ifdef USE_MDP3
++    framebuffer_device_t *mFbDev;
++#endif
+ 
+     //CopyBit objects
+     qhwc::CopyBit *mCopyBit[HWC_NUM_DISPLAY_TYPES];
+-- 
+1.9.5.msysgit.0
+

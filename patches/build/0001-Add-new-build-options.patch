@@ -1,0 +1,217 @@
+From 4eb9f29d5042791e222271d8f2dcbc8932a44cac Mon Sep 17 00:00:00 2001
+From: remittor <remittor@gmail.com>
+Date: Tue, 3 Nov 2015 11:45:36 +0300
+Subject: [PATCH] Add new build options
+
+TARGET_USE_O3 := true
+OPT_MEMORY := true
+STRICT_ALIASING := false
+SUPPRESS_UNUSED_WARNING := true
+---
+ core/combo/TARGET_linux-arm.mk | 91 +++++++++++++++++++++++++++++++++++++++++-
+ core/combo/select.mk           | 30 +++++++++++++-
+ core/dumpvar.mk                |  6 +++
+ 3 files changed, 124 insertions(+), 3 deletions(-)
+
+diff --git a/core/combo/TARGET_linux-arm.mk b/core/combo/TARGET_linux-arm.mk
+index 3497662..8378e1e 100644
+--- a/core/combo/TARGET_linux-arm.mk
++++ b/core/combo/TARGET_linux-arm.mk
+@@ -35,11 +35,19 @@ TARGET_ARCH_VARIANT := armv5te
+ endif
+ 
+ ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
+-TARGET_GCC_VERSION := 4.7
++TARGET_GCC_VERSION := 4.8
+ else
+ TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
+ endif
+ 
++# Highly experimental, use with extreme caution.
++# -fgcse-las & -fpredictive-commoning = memory optimization flags, does not increase code size. gcse-las is not envoked by any -*O flags.
++# -fpredictive-commoning is enabled by default when using -O3. So if using -O3 there's no need to pass it twice.
++OPT_MEM := -fgcse-las
++ifneq ($(TARGET_USE_O3),true)
++OPT_MEM += -fpredictive-commoning
++endif
++
+ TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
+ ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
+ $(error Unknown ARM architecture version: $(TARGET_ARCH_VARIANT))
+@@ -73,12 +81,77 @@ TARGET_arm_CFLAGS :=    -O2 \
+                         -fstrict-aliasing    \
+                         -funswitch-loops
+ 
++ifeq ($(TARGET_USE_O3),true)
++TARGET_arm_CFLAGS :=    -O3 \
++                        -fno-tree-vectorize \
++                        -fno-inline-functions \
++                        -fomit-frame-pointer
++endif
++
++ifeq ($(TARGET_USE_OSIZE),true)
++TARGET_arm_CFLAGS :=    -Os \
++                        -fomit-frame-pointer \
++                        -fno-zero-initialized-in-bss \
++                        -funswitch-loops \
++                        -fno-tree-vectorize \
++                        -funsafe-loop-optimizations
++endif
++
++ifeq ($(strip $(SUPPRESS_UNUSED_WARNING)),true)
++TARGET_arm_CFLAGS +=    -Wno-unused-parameter \
++                        -Wno-unused-value \
++                        -Wno-unused-function \
++                        -Wno-error=strict-aliasing
++endif
++
++ifeq ($(strip $(STRICT_ALIASING)),true)
++TARGET_arm_CFLAGS +=    -fstrict-aliasing \
++                        -Wstrict-aliasing=3 \
++                        -Werror=strict-aliasing
++endif
++
++ifeq ($(strip $(OPT_MEMORY)),true)
++TARGET_arm_CFLAGS += $(OPT_MEM)
++endif
++
+ # Modules can choose to compile some source as thumb.
+ TARGET_thumb_CFLAGS :=  -mthumb \
+                         -Os \
+                         -fomit-frame-pointer \
+                         -fno-strict-aliasing
+ 
++ifeq ($(TARGET_USE_O3),true)
++    TARGET_thumb_CFLAGS :=  -mthumb \
++                            -O3 \
++                            -fno-tree-vectorize \
++                            -fno-inline-functions \
++                            -fno-unswitch-loops \
++                            -fomit-frame-pointer
++endif
++
++ifeq ($(TARGET_USE_OSIZE),true)
++    TARGET_thumb_CFLAGS :=  -mthumb \
++                            -Os \
++                            -fomit-frame-pointer
++endif
++
++ifeq ($(strip $(SUPPRESS_UNUSED_WARNING)),true)
++TARGET_thumb_CFLAGS += -Wno-unused-parameter \
++                       -Wno-unused-value \
++                       -Wno-unused-function \
++                       -Wno-error=strict-aliasing
++endif
++
++ifeq ($(strip $(STRICT_ALIASING)),true)
++TARGET_thumb_CFLAGS +=    -fstrict-aliasing \
++                          -Wstrict-aliasing=3 \
++                          -Werror=strict-aliasing
++endif
++
++ifeq ($(strip $(OPT_MEMORY)),true)
++TARGET_thumb_CFLAGS += $(OPT_MEM)
++endif
++
+ # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
+ # or in your environment to force a full arm build, even for
+ # files that are normally built as thumb; this can make
+@@ -121,11 +194,21 @@ TARGET_GLOBAL_CFLAGS += \
+ # We cannot turn it off blindly since the option is not available
+ # in gcc-4.4.x.  We also want to disable sincos optimization globally
+ # by turning off the builtin sin function.
+-ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(TARGET_GCC_VERSION)),)
++ifneq ($(filter 4.6 4.6.% 4.7 4.7.% 4.8 4.8.% 4.9 4.9.%, $(TARGET_GCC_VERSION)),)
+ TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fno-builtin-sin \
+ 			-fno-strict-volatile-bitfields
+ endif
+ 
++ifeq ($(strip $(STRICT_ALIASING)),true)
++TARGET_GLOBAL_CFLAGS += -fstrict-aliasing \
++                        -Wstrict-aliasing=3 \
++                        -Werror=strict-aliasing
++endif
++
++ifeq ($(strip $(OPT_MEMORY)),true)
++TARGET_GLOBAL_CFLAGS += $(OPT_MEM)
++endif
++
+ # This is to avoid the dreaded warning compiler message:
+ #   note: the mangling of 'va_list' has changed in GCC 4.4
+ #
+@@ -158,6 +241,10 @@ TARGET_RELEASE_CFLAGS := \
+ 			-frerun-cse-after-loop \
+ 			-frename-registers
+ 
++ifeq ($(strip $(OPT_MEMORY)),true)
++TARGET_RELEASE_CFLAGS += $(OPT_MEM)
++endif
++
+ libc_root := bionic/libc
+ libm_root := bionic/libm
+ libstdc++_root := bionic/libstdc++
+diff --git a/core/combo/select.mk b/core/combo/select.mk
+index d5f7379..876f360 100644
+--- a/core/combo/select.mk
++++ b/core/combo/select.mk
+@@ -46,11 +46,39 @@ $(combo_target)HAVE_STRLCPY := 0
+ $(combo_target)HAVE_STRLCAT := 0
+ $(combo_target)HAVE_KERNEL_MODULES := 0
+ 
++# Highly experimental, use with extreme caution.
++# -fgcse-las & -fpredictive-commoning = memory optimization flags, does not increase code size. gcse-las is not envoked by any -*O flags.
++# -fpredictive-commoning is enabled by default when using -O3. So if using -O3 there's no need to pass it twice.
++OPT_MEM := -fgcse-las
++ifneq ($(TARGET_USE_O3),true)
++OPT_MEM += -fpredictive-commoning
++endif
++
+ $(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
+-$(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
++$(combo_target)RELEASE_CFLAGS := -O2 -g
+ $(combo_target)GLOBAL_LDFLAGS :=
+ $(combo_target)GLOBAL_ARFLAGS := crsP
+ 
++ifeq ($(TARGET_USE_O3),true)
++$(combo_target)RELEASE_CFLAGS := -O3 -g -fno-tree-vectorize -fno-inline-functions -fno-unswitch-loops
++$(combo_target)GLOBAL_LDFLAGS :=
++endif
++
++ifeq ($(TARGET_USE_OSIZE),true)
++$(combo_target)RELEASE_CFLAGS := -Os -g
++$(combo_target)GLOBAL_LDFLAGS :=
++endif
++
++ifeq ($(strip $(STRICT_ALIASING)),true)
++$(combo_target)RELEASE_CFLAGS += -fstrict-aliasing -Wstrict-aliasing=3 -Werror=strict-aliasing
++else
++$(combo_target)RELEASE_CFLAGS += -fno-strict-aliasing
++endif
++
++ifeq ($(strip $(OPT_MEMORY)),true)
++$(combo_target)RELEASE_CFLAGS += $(OPT_MEM)
++endif
++
+ $(combo_target)EXECUTABLE_SUFFIX :=
+ $(combo_target)SHLIB_SUFFIX := .so
+ $(combo_target)JNILIB_SUFFIX := $($(combo_target)SHLIB_SUFFIX)
+diff --git a/core/dumpvar.mk b/core/dumpvar.mk
+index c31e809..77fa75e 100644
+--- a/core/dumpvar.mk
++++ b/core/dumpvar.mk
+@@ -100,6 +100,12 @@ $(info   TARGET_BUILD_APPS=$(TARGET_BUILD_APPS))
+ $(info   TARGET_ARCH=$(TARGET_ARCH))
+ $(info   TARGET_ARCH_VARIANT=$(TARGET_ARCH_VARIANT))
+ $(info   TARGET_CPU_VARIANT=$(TARGET_CPU_VARIANT))
++$(info   TARGET_GCC_VERSION=$(TARGET_GCC_VERSION))
++$(info   TARGET_GCC_VERSION_EXP=$(TARGET_GCC_VERSION_EXP))
++$(info   TARGET_USE_O3=$(TARGET_USE_O3))
++$(info   OPT_MEMORY=$(OPT_MEMORY))
++$(info   STRICT_ALIASING=$(STRICT_ALIASING))
++$(info   SUPPRESS_UNUSED_WARNING=$(SUPPRESS_UNUSED_WARNING))
+ $(info   HOST_ARCH=$(HOST_ARCH))
+ $(info   HOST_OS=$(HOST_OS))
+ $(info   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
+-- 
+1.9.5.msysgit.0
+

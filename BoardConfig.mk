@@ -83,19 +83,6 @@ BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00208000 --ramdisk_offset 0x01500000 --tags_offset 0x00200100 
 
-# These currently have to go to the ramdisk for wlan_detect to pick them up.
-# Hopefully they can join their friends at $(KERNEL_MODULES_OUT) soon. :(
-KERNEL_EXTERNAL_MODULES:
-	mkdir -p $(TARGET_ROOT_OUT)/wifi
-	rm -rf $(TARGET_OUT_INTERMEDIATES)/ath6kl
-	cp -a hardware/atheros/wifi/ath6kl $(TARGET_OUT_INTERMEDIATES)/
-	$(MAKE) -C $(TARGET_OUT_INTERMEDIATES)/ath6kl/cfg80211 KERNEL_OUT=$(KERNEL_OUT) ARCH="arm" CROSS_COMPILE="arm-eabi-" modules
-	$(MAKE) -C $(TARGET_OUT_INTERMEDIATES)/ath6kl/ar6000 KERNEL_OUT=$(KERNEL_OUT) ARCH="arm" CROSS_COMPILE="arm-eabi-" modules
-	$(TARGET_OBJCOPY) --strip-unneeded $(TARGET_OUT_INTERMEDIATES)/ath6kl/cfg80211/cfg80211.ko $(TARGET_ROOT_OUT)/wifi/cfg80211.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(TARGET_OUT_INTERMEDIATES)/ath6kl/ar6000/ar6000.ko $(TARGET_ROOT_OUT)/wifi/ar6000.ko
-
-TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
-
 # Partitions
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 571859200
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 984961024
@@ -213,7 +200,7 @@ TARGET_USE_CUSTOM_SECOND_LUN_NUM := 1
 
 # Recovery
 #TARGET_NO_RECOVERY := true
-TARGET_NO_SEPARATE_RECOVERY := false
+#TARGET_NO_SEPARATE_RECOVERY := false
 RECOVERY_VARIANT := cm
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_RECOVERY_SWIPE := true
@@ -223,14 +210,14 @@ DEVICE_RESOLUTION := 540x960
 BOARD_CUSTOM_GRAPHICS := ../../../device/jsr/d9/recovery/graphics.c
 TARGET_RECOVERY_FSTAB := device/jsr/d9/recovery/recovery.fstab
 #BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/jsr/d9/recovery/recovery-keys.c
-#BOARD_UMS_LUNFILE := /sys/class/android_usb/android0/f_mass_storage/lun%d/file
+BOARD_UMS_LUNFILE := /sys/class/android_usb/android0/f_mass_storage/lun%d/file
 #TARGET_RECOVERY_INITRC := device/jsr/d9/recovery/init.rc
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 
 # Wi-Fi
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_HOSTAPD_DRIVER := NL80211
-#TARGET_CUSTOM_WIFI := ../../device/jsr/d9/libhardware_legacy/wifi/wifi.c
+TARGET_CUSTOM_WIFI := ../../device/jsr/d9/libhardware_legacy/wifi/wifi.c
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_HAS_ATH_WLAN := true
 BOARD_WLAN_DEVICE := ath6kl
@@ -239,14 +226,53 @@ BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 WIFI_DRIVER_FW_PATH_AP := "ap"
 WIFI_DRIVER_FW_PATH_STA := "sta"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
+
+WIFI_DRIVER_IFACE_NAME := "eth"
 WIFI_DRIVER_MODULE_PATH := "/data/misc/wifi/load/ar6000.ko"
 WIFI_DRIVER_MODULE_NAME := "ar6000"
+
+#WIFI_DRIVER_IFACE_NAME := "wlan"
+#WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl/ath6kl_sdio.ko"
+#WIFI_DRIVER_MODULE_NAME := "wlan"
 #WIFI_EXT_MODULE_PATH := "/system/lib/modules/ath6kl/cfg80211.ko"
 #WIFI_EXT_MODULE_NAME := "cfg80211"
 #WIFI_DRIVER_FW_PATH_PARAM := "/data/misc/wifi/fwpath"
+
+#WIFI_PARAMS += WIFI_FIX_HUAWEI_BUTCHERING="true"
+#WIFI_PARAMS += WIFI_POWER_TUNED="true"
+#WIFI_PARAMS += AR6005_SELF_INIT_SUPPORT="true"
+
+WIFI_PARAMS += WIFI_DRIVER_IFACE_NAME="$(WIFI_DRIVER_IFACE_NAME)"
+WIFI_PARAMS += WIFI_DRIVER_MODULE_PATH="$(WIFI_DRIVER_MODULE_PATH)"
+WIFI_PARAMS += WIFI_DRIVER_MODULE_NAME="$(WIFI_DRIVER_MODULE_NAME)"
+
+WIFI_PARAMS += AR6003_MAC_FILE="softmac"
+WIFI_PARAMS += AR6003_REV2_BOARD_POWER_PA_FILE="../../data/misc/wifi/Cal_powerTuned_pa.bin"
+WIFI_PARAMS += AR6003_HW_FW_DIR="ath6k"
+WIFI_PARAMS += AR6003_HW_BOARD_DATA_FILE="load/caldata.bin"
+WIFI_PARAMS += AR6003_HW_DEFAULT_BOARD_DATA_FILE="ath6k/bdata.SD31.bin"
+
+# These currently have to go to the ramdisk for wlan_detect to pick them up.
+# Hopefully they can join their friends at $(KERNEL_MODULES_OUT) soon. :(
+KERNEL_EXTERNAL_MODULES:
+	mkdir -p $(TARGET_ROOT_OUT)/wifi
+	rm -rf $(TARGET_OUT_INTERMEDIATES)/ath6kl
+	cp -a hardware/atheros/wifi/ath6kl $(TARGET_OUT_INTERMEDIATES)/
+	$(MAKE) -C $(TARGET_OUT_INTERMEDIATES)/ath6kl/cfg80211 KERNEL_OUT=$(KERNEL_OUT) ARCH="arm" CROSS_COMPILE="arm-eabi-" modules
+	$(MAKE) -C $(TARGET_OUT_INTERMEDIATES)/ath6kl/ar6000 KERNEL_OUT=$(KERNEL_OUT) ARCH="arm" CROSS_COMPILE="arm-eabi-" $(WIFI_PARAMS) modules
+	$(TARGET_OBJCOPY) --strip-unneeded $(TARGET_OUT_INTERMEDIATES)/ath6kl/cfg80211/cfg80211.ko $(TARGET_ROOT_OUT)/wifi/cfg80211.ko
+	$(TARGET_OBJCOPY) --strip-unneeded $(TARGET_OUT_INTERMEDIATES)/ath6kl/ar6000/ar6000.ko $(TARGET_ROOT_OUT)/wifi/ar6000.ko
+
+TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
  
 # Include an expanded selection of fonts
 #EXTENDED_FONT_FOOTPRINT := true
 
 # Enable Minikin text layout engine (will be the default soon)
 #USE_MINIKIN := true
+
+# BUILD FLAGS
+#TARGET_USE_O3 := true
+#OPT_MEMORY := true
+STRICT_ALIASING := false
+SUPPRESS_UNUSED_WARNING := true

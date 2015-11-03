@@ -186,7 +186,7 @@ PRODUCT_PROPERTY_OVERRIDES += ro.vold.umsdirtyratio=50
 
 #PRODUCT_PROPERTY_OVERRIDES += persist.webview.provider=classic
 
-PRODUCT_PROPERTY_OVERRIDES += wifi.interface=wlan0
+PRODUCT_PROPERTY_OVERRIDES += wifi.interface=eth0
 PRODUCT_PROPERTY_OVERRIDES += wifi.supplicant_scan_interval=60
 
 PRODUCT_PROPERTY_OVERRIDES += ro.confg.hw_appfsversion=d9V4_4_SYSIMG

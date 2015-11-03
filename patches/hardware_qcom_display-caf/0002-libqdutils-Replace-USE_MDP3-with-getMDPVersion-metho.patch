@@ -1,0 +1,47 @@
+From 877129539cb16f419f933030cfe6a9e2782aa5b8 Mon Sep 17 00:00:00 2001
+From: Ramakant Singh <ramaka@codeaurora.org>
+Date: Mon, 13 Aug 2012 13:21:02 +0530
+Subject: [PATCH 039/100] libqdutils::Replace USE_MDP3 with getMDPVersion()
+ method.
+
+  Change-Id: Id602c8ab8d8ba140a379ba0e475c73806d17b527
+
+Change-Id: I81dd6d347c72939d64611a53881be808af026af3
+---
+ libqdutils/comptype.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/libqdutils/comptype.h b/libqdutils/comptype.h
+index 71f4871..fe604ff 100644
+--- a/libqdutils/comptype.h
++++ b/libqdutils/comptype.h
+@@ -33,7 +33,7 @@
+ #include <stdint.h>
+ #include <utils/Singleton.h>
+ #include <cutils/properties.h>
+-
++#include <mdp_version.h>
+ using namespace android;
+ namespace qdutils {
+ // Enum containing the supported composition types
+@@ -68,11 +68,12 @@ inline QCCompositionType::QCCompositionType()
+         } else if ((strncmp(property, "c2d", 3)) == 0) {
+             mCompositionType = COMPOSITION_TYPE_C2D;
+         } else if ((strncmp(property, "dyn", 3)) == 0) {
+-#ifdef USE_MDP3
+-            mCompositionType = COMPOSITION_TYPE_DYN | COMPOSITION_TYPE_MDP;
+-#else
+-            mCompositionType = COMPOSITION_TYPE_DYN | COMPOSITION_TYPE_C2D;
+-#endif
++             if (qdutils::MDPVersion::getInstance().getMDPVersion() < 400)
++                     mCompositionType =
++                         COMPOSITION_TYPE_DYN | COMPOSITION_TYPE_MDP;
++                 else
++                     mCompositionType =
++                         COMPOSITION_TYPE_DYN | COMPOSITION_TYPE_C2D;
+         }
+     }
+ }
+-- 
+1.9.5.msysgit.0
+
