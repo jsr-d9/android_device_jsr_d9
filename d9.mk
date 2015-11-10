@@ -77,7 +77,10 @@ PRODUCT_PACKAGES += libstagefrighthw
 
 PRODUCT_PACKAGES += gps.msm7x27a
 #PRODUCT_PACKAGES += camera.msm7x27a 
-#PRODUCT_PACKAGES += lights.msm7x27a
+PRODUCT_PACKAGES += lights.msm7x27a
+
+PRODUCT_PACKAGES += power.msm7x27a
+PRODUCT_PACKAGES += power.qcom
 
 PRODUCT_PACKAGES += com.android.future.usb.accessory
 PRODUCT_PACKAGES += hwmac
@@ -111,23 +114,22 @@ PRODUCT_COPY_FILES += device/jsr/d9/configs/audio_policy.conf:system/etc/audio_p
 PRODUCT_COPY_FILES += device/jsr/d9/configs/media_codecs.xml:system/etc/media_codecs.xml
 PRODUCT_COPY_FILES += device/jsr/d9/configs/media_profiles.xml:system/etc/media_profiles.xml
 
-#PRODUCT_COPY_FILES += device/jsr/d9/idc/qwerty.idc:system/usr/idc/qwerty.idc
-#PRODUCT_COPY_FILES += device/jsr/d9/idc/qwerty2.idc:system/usr/idc/qwerty2.idc
-PRODUCT_COPY_FILES += device/jsr/d9/keychars/7x27a_kp.kcm:system/usr/keychars/7x27a_kp.kcm
-PRODUCT_COPY_FILES += device/jsr/d9/keylayout/7x27a_kp.kl:system/usr/keylayout/7x27a_kp.kl
-PRODUCT_COPY_FILES += device/jsr/d9/keylayout/surf_keypad.kl:system/usr/keylayout/surf_keypad.kl
-
 # ETC
-PRODUCT_PACKAGES += device/jsr/d9/configs/AudioFilter.csv:system/etc/AudioFilter.csv
-PRODUCT_PACKAGES += device/jsr/d9/configs/init.qcom.fm.sh:system/etc/init.qcom.fm.sh
-PRODUCT_PACKAGES += device/jsr/d9/configs/thermald.conf:system/etc/thermald.conf
+PRODUCT_COPY_FILES += device/jsr/d9/configs/AudioFilter.csv:system/etc/AudioFilter.csv
+PRODUCT_COPY_FILES += device/jsr/d9/configs/init.qcom.fm.sh:system/etc/init.qcom.fm.sh
+PRODUCT_COPY_FILES += device/jsr/d9/configs/thermald.conf:system/etc/thermald.conf
+
+# Keychars
+PRODUCT_COPY_FILES += device/jsr/d9/keychars/7x27a_kp.kcm:system/usr/keychars/7x27a_kp.kcm
 
 # Keylayout
-PRODUCT_PACKAGES += device/jsr/d9/keylayout/7k_handset.kl:system/usr/keylayout/7k_handset.kl
-PRODUCT_PACKAGES += device/jsr/d9/keylayout/atmel_mxt_ts.kl:system/usr/keylayout/atmel_mxt_ts.kl
-PRODUCT_PACKAGES += device/jsr/d9/keylayout/AVRCP.kl:system/usr/keylayout/AVRCP.kl
-PRODUCT_PACKAGES += device/jsr/d9/keylayout/ft5x06_ts.kl:system/usr/keylayout/ft5x06_ts.kl
-PRODUCT_PACKAGES += device/jsr/d9/keylayout/Generic.kl:system/usr/keylayout/Generic.kl
+PRODUCT_COPY_FILES += device/jsr/d9/keylayout/7x27a_kp.kl:system/usr/keylayout/7x27a_kp.kl
+PRODUCT_COPY_FILES += device/jsr/d9/keylayout/7k_handset.kl:system/usr/keylayout/7k_handset.kl
+PRODUCT_COPY_FILES += device/jsr/d9/keylayout/atmel_mxt_ts.kl:system/usr/keylayout/atmel_mxt_ts.kl
+PRODUCT_COPY_FILES += device/jsr/d9/keylayout/ft5x06_ts.kl:system/usr/keylayout/ft5x06_ts.kl
+PRODUCT_COPY_FILES += device/jsr/d9/keylayout/surf_keypad.kl:system/usr/keylayout/surf_keypad.kl
+#PRODUCT_COPY_FILES += device/jsr/d9/keylayout/AVRCP.kl:system/usr/keylayout/AVRCP.kl
+#PRODUCT_COPY_FILES += device/jsr/d9/keylayout/Generic.kl:system/usr/keylayout/Generic.kl
 
 # Permissions
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml

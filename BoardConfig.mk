@@ -169,7 +169,7 @@ BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
 BOARD_HARDWARE_CLASS := device/jsr/d9/cmhw
 
 # Lights
-TARGET_PROVIDES_LIBLIGHTS := true
+#TARGET_PROVIDES_LIBLIGHTS := true
 
 # Media
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := true
