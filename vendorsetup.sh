@@ -1,3 +1,6 @@
+/bin/cp device/jsr/d9/post_process_props_hook.py build/tools/
+chmod  0775 build/tools/post_process_props_hook.py
+
 add_lunch_combo cm_d9-eng
 add_lunch_combo cm_d9-userdebug
 add_lunch_combo cm_d9-user dist

@@ -1,0 +1,35 @@
+From 614abe42619508beb8eb81985bb99dbaf3cd6bc0 Mon Sep 17 00:00:00 2001
+From: remittor <remittor@gmail.com>
+Date: Thu, 30 Jul 2015 17:30:59 +0300
+Subject: [PATCH] Add hook functions to post_process_props.py
+
+---
+ tools/post_process_props.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/post_process_props.py b/tools/post_process_props.py
+index fc61621..adf41aa 100755
+--- a/tools/post_process_props.py
++++ b/tools/post_process_props.py
+@@ -15,6 +15,7 @@
+ # limitations under the License.
+ 
+ import os, sys
++from post_process_props_hook import *
+ 
+ # Put the modifications that you need to make into the /system/build.prop into this
+ # function. The prop object has get(name) and put(name,value) methods.
+@@ -82,8 +83,10 @@ def main(argv):
+   properties = PropFile(lines)
+   if filename.endswith("/build.prop"):
+     mangle_build_prop(properties, extraargs)
++    mangle_build_prop_hook(properties, extraargs)
+   elif filename.endswith("/default.prop"):
+     mangle_default_prop(properties)
++    mangle_default_prop_hook(properties)
+   else:
+     sys.stderr.write("bad command line: " + str(argv) + "\n")
+     sys.exit(1)
+-- 
+1.9.5.msysgit.0
+
