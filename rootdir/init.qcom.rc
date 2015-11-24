@@ -222,20 +222,17 @@ on post-fs-data
 #   disabled
 #   oneshot
 
-#add support for dsds
-#service ril-daemon1 /system/bin/rild -c 1
-#    class main
-#    socket rild1 stream 660 root radio
-#    socket rild-debug1 stream 660 radio system
-#    user root
-#    disabled
-#    group radio cache inet misc audio sdcard_rw qcom_oncrpc diag
+add support for dsds
+service ril-daemon1 /system/bin/rild -c 1
+    class main
+    socket rild1 stream 660 root radio
+    socket rild-debug1 stream 660 radio system
+    user root
+    disabled
+    group radio cache inet misc audio sdcard_r sdcard_rw qcom_oncrpc qcom_diag log
 
-
-#on property:ro.multi.rild=true
-#    start ril-daemon1
-
-#add end
+on property:ro.multi.rild=true
+    start ril-daemon1
 
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
@@ -264,6 +261,7 @@ service netmgrd /system/bin/netmgrd
 service oem_rpc_svc /system/bin/oem_rpc_svc
     class main
 
+# QMUX must be in multiple groups to support external process connections
 service qmuxd /system/bin/qmuxd
     class main
     user radio
