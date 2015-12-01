@@ -9,7 +9,6 @@ patches_path="$build_root/device/jsr/d9/patches/"
 cd $patches_path
 
 unset repos
-find -type f -name '*.patch'|cut -d / -f 2-|sort
 
 echo "======================= Applying patches: start ======================="
 
@@ -28,23 +27,25 @@ for patch in `find -type f -name '*.patch'|cut -d / -f 2-|sort`; do
 	cd $build_root/$repo_to_patch
 
 	if (git log |fgrep -qm1 "$title" ); then
-		echo Yes
+		echo -n Yes
 		commit_hash=$(git log --oneline |fgrep -m1 "$title"|cut -d ' ' -f 1)
 		if [ q"$commit_hash" != "q" ]; then
-			echo -n "Checking if patch $patch matches commit $commit_hash... "
+			#echo -n "Checking if patch $patch matches commit $commit_hash... "
 			commit_id=$(git format-patch -1 --stdout $commit_hash |git patch-id|cut -d ' ' -f 1)
 			patch_id=$(git patch-id < $absolute_patch_path|cut -d ' ' -f 1)
-			#grep -oPz -- '(?s)-- ?\n[0-9.]+\n' $absolute_patch_path
-			if [ $commit_id = $patch_id ]; then 
-				echo 'Yes, it matches'
+			if [ "$commit_id" = "$patch_id" ]; then 
+				echo ', patch matches'
 			else
-				echo 'NO! MISMATCH!'
+				echo -n ', PATCH MISMATCH!'
 				echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 				sed '0,/^$/d' $absolute_patch_path|head -n -3  > /tmp/patch
 				git show --stat $commit_hash -p --pretty=format:%b > /tmp/commit
 				diff -u /tmp/patch /tmp/commit
 				rm /tmp/patch /tmp/commit
 				echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+				echo ' Resetting branch!'
+				git checkout $commit_hash~1
+				git am $absolute_patch_path || git am --abort
 			fi
 		else
 			echo "Unable to get commit hash for '$title'! Something went wrong!"
