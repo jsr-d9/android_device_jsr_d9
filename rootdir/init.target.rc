@@ -79,6 +79,12 @@ service wlan_detect /system/bin/wlan_detect
     group root
     oneshot
 
+service gps_check /system/bin/gps_check
+    class main
+    user root
+    group root
+    oneshot
+
 on property:persist.sys.thermal.monitor=1
     start thermald
 
