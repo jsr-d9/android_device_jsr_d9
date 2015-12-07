@@ -76,7 +76,7 @@ PRODUCT_PACKAGES += libOmxCore
 PRODUCT_PACKAGES += libstagefrighthw
 
 PRODUCT_PACKAGES += gps.msm7x27a
-#PRODUCT_PACKAGES += camera.msm7x27a 
+PRODUCT_PACKAGES += camera.msm7x27a 
 PRODUCT_PACKAGES += lights.msm7x27a
 
 PRODUCT_PACKAGES += power.msm7x27a
@@ -133,6 +133,7 @@ PRODUCT_COPY_FILES += device/jsr/d9/keylayout/surf_keypad.kl:system/usr/keylayou
 
 # Permissions
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml
+PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml
 PRODUCT_COPY_FILES += frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml
