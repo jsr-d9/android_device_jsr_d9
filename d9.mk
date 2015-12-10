@@ -26,6 +26,9 @@ PRODUCT_AAPT_PREF_CONFIG := hdpi
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
+# ViewMem 
+PRODUCT_PACKAGES += viewmem
+
 # Ramdisk
 PRODUCT_PACKAGES += fstab.qcom
 PRODUCT_PACKAGES += init.qcom.rc
