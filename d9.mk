@@ -121,6 +121,7 @@ PRODUCT_COPY_FILES += device/jsr/d9/configs/media_profiles.xml:system/etc/media_
 PRODUCT_COPY_FILES += device/jsr/d9/configs/AudioFilter.csv:system/etc/AudioFilter.csv
 PRODUCT_COPY_FILES += device/jsr/d9/configs/init.qcom.fm.sh:system/etc/init.qcom.fm.sh
 PRODUCT_COPY_FILES += device/jsr/d9/configs/thermald.conf:system/etc/thermald.conf
+PRODUCT_COPY_FILES += device/jsr/d9/configs/gps.conf:system/etc/gps.conf
 
 # Keychars
 PRODUCT_COPY_FILES += device/jsr/d9/keychars/7x27a_kp.kcm:system/usr/keychars/7x27a_kp.kcm
