@@ -153,6 +153,9 @@ PRODUCT_COPY_FILES += frameworks/native/data/etc/handheld_core_hardware.xml:syst
 #PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
 #PRODUCT_PACKAGES += frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml
 
+# Override bootanimation
+PRODUCT_COPY_FILES += device/jsr/d9/bootanimation/cm10.zip:system/media/bootanimation.zip
+
 #$(call inherit-product, $(SRC_TARGET_DIR)/product/full.mk)
 
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
