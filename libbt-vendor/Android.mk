@@ -15,7 +15,7 @@
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 #
 
-BDROID_DIR:= external/bluetooth/bluedroid
+BDROID_DIR:= system/bt
 
 LOCAL_PATH := $(call my-dir)
 
@@ -23,9 +23,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libbt-vendor
 LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-LOCAL_MODULE_OWNER := qcom
-LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_SHARED_LIBRARIES)
+LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)
 
 LOCAL_SRC_FILES := \
 	bt_vendor_qcom.c \

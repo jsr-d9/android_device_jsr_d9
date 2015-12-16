@@ -34,6 +34,7 @@
 #include "nl80211.h"
 #endif
 
+#include <sys/stat.h>
 #include "hardware_legacy/wifi.h"
 #include "libwpa_client/wpa_ctrl.h"
 
@@ -179,7 +180,7 @@ char* get_samsung_wifi_type()
 }
 #endif
 
-static int insmod(const char *filename, const char *args)
+int insmod(const char *filename, const char *args)
 {
     void *module;
     unsigned int size;
@@ -196,7 +197,7 @@ static int insmod(const char *filename, const char *args)
     return ret;
 }
 
-static int rmmod(const char *modname)
+int rmmod(const char *modname)
 {
     int ret = -1;
     int maxtry = 10;
@@ -493,7 +494,7 @@ int update_ctrl_interface(const char *config_file) {
     return ret;
 }
 
-int ensure_config_file_exists(const char *config_file)
+int ensure_config_file_exists(const char *config_file, const char *config_file_template)
 {
     char buf[2048];
     int srcfd, destfd;
@@ -521,9 +522,9 @@ int ensure_config_file_exists(const char *config_file)
         return -1;
     }
 
-    srcfd = TEMP_FAILURE_RETRY(open(SUPP_CONFIG_TEMPLATE, O_RDONLY));
+    srcfd = TEMP_FAILURE_RETRY(open(config_file_template, O_RDONLY));
     if (srcfd < 0) {
-        ALOGE("Cannot open \"%s\": %s", SUPP_CONFIG_TEMPLATE, strerror(errno));
+        ALOGE("Cannot open \"%s\": %s", config_file_template, strerror(errno));
         return -1;
     }
 
@@ -536,7 +537,7 @@ int ensure_config_file_exists(const char *config_file)
 
     while ((nread = TEMP_FAILURE_RETRY(read(srcfd, buf, sizeof(buf)))) != 0) {
         if (nread < 0) {
-            ALOGE("Error reading \"%s\": %s", SUPP_CONFIG_TEMPLATE, strerror(errno));
+            ALOGE("Error reading \"%s\": %s", config_file_template, strerror(errno));
             close(srcfd);
             close(destfd);
             unlink(config_file);
@@ -794,7 +795,7 @@ int wifi_start_supplicant(int p2p_supported)
         strcpy(supplicant_prop_name, P2P_PROP_NAME);
 
         /* Ensure p2p config file is created */
-        if (ensure_config_file_exists(P2P_CONFIG_FILE) < 0) {
+        if (ensure_config_file_exists(P2P_CONFIG_FILE, SUPP_CONFIG_TEMPLATE) < 0) {
             ALOGE("Failed to create a p2p config file");
             return -1;
         }
@@ -811,7 +812,7 @@ int wifi_start_supplicant(int p2p_supported)
     }
 
     /* Before starting the daemon, make sure its config file exists */
-    if (ensure_config_file_exists(SUPP_CONFIG_FILE) < 0) {
+    if (ensure_config_file_exists(SUPP_CONFIG_FILE, SUPP_CONFIG_TEMPLATE) < 0) {
         ALOGE("Wi-Fi will not be enabled");
         return -1;
     }

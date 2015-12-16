@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
- * Copyright (c) 2012, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,7 +179,7 @@ static audio_io_handle_t ap_get_output(struct audio_policy *pol,
 
     ALOGV("%s: tid %d", __func__, gettid());
     return qap->apm->getOutput((AudioSystem::stream_type)stream,
-                               sampling_rate,(int)  format, channelMask,
+                               sampling_rate, format, channelMask,
                                (AudioSystem::output_flags)flags, info);
 }
 
@@ -213,7 +213,7 @@ static audio_io_handle_t ap_get_input(struct audio_policy *pol, audio_source_t i
                                       audio_in_acoustics_t acoustics)
 {
     struct qcom_audio_policy *qap = to_qap(pol);
-    return qap->apm->getInput((int) inputSource, sampling_rate,(int) format, channelMask,
+    return qap->apm->getInput((int) inputSource, sampling_rate, format, channelMask,
                               (AudioSystem::audio_in_acoustics)acoustics);
 }
 
@@ -503,7 +503,7 @@ struct qcom_ap_module HAL_MODULE_INFO_SYM = {
             version_minor: 0,
             id: AUDIO_POLICY_HARDWARE_MODULE_ID,
             name: "QCOM Audio Policy HAL",
-            author: "Code Aurora Forum",
+            author: "The Linux Foundation",
             methods: &qcom_ap_module_methods,
             dso : NULL,
             reserved : {0},

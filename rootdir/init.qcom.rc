@@ -37,19 +37,26 @@ on early-init
 on init
     mkdir /persist 0771 system system
 
-    mkdir /storage 0775 system sdcard_r
-    mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
-    mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/sdcard0 0000 system system
+    # Use SDCard as primary storage
+    setprop ro.vold.primary_physical 1
 
-    export SECONDARY_STORAGE /storage/sdcard1
-    export EXTERNAL_STORAGE /storage/sdcard0
+    #mkdir /storage 0775 system sdcard_r
+    #mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    #mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
+    #mkdir /storage/sdcard1 0000 system system
+    #mkdir /storage/sdcard0 0000 system system
 
-    symlink /storage/sdcard1 /mnt/sdcard
-    symlink /storage/sdcard1 /sdcard
-    symlink /storage/sdcard0 /mnt/internal_sd
-    symlink /storage/sdcard0 /internal_sd
+    #export SECONDARY_STORAGE /storage/sdcard1
+    #export EXTERNAL_STORAGE /storage/sdcard0
+
+    #symlink /storage/sdcard1 /mnt/sdcard
+    #symlink /storage/sdcard1 /sdcard
+    #symlink /storage/sdcard0 /mnt/internal_sd
+    #symlink /storage/sdcard0 /internal_sd
+    
+    # Support legacy paths
+    symlink /sdcard /mnt/sdcard
+    symlink /sdcard /storage/sdcard0
 
 on boot
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
@@ -92,10 +99,6 @@ on boot
 
     # For bridgemgr daemon to inform the USB driver of the correct transport
     chown radio radio /sys/class/android_usb/f_rmnet_smd_sdio/transport
-
-    # insert the system monitor modules
-    #insmod /system/lib/modules/sm_event_log.ko
-    #insmod /system/lib/modules/sm_event_driver.ko
 
     # To allow interfaces to get v6 address when tethering is enabled
     write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
@@ -206,7 +209,7 @@ on boot
     chown system system /sys/class/leds/flashlight/brightness
     chmod 0666 /sys/class/leds/flashlight/brightness
 
-on emmc-fs
+on fs
     # mount mmc partitions
     mount_all /fstab.qcom
     swapon_all /fstab.qcom
@@ -261,16 +264,16 @@ on post-fs-data
 #   disabled
 #   oneshot
 
-service ril-daemon1 /system/bin/rild -c 1
-    class main
-    socket rild1 stream 660 root radio
-    socket rild-debug1 stream 660 radio system
-    user root
-    disabled
-    group radio cache inet misc audio sdcard_r sdcard_rw qcom_oncrpc qcom_diag log
+#service ril-daemon1 /system/bin/rild -c 1
+#    class main
+#    socket rild1 stream 660 root radio
+#    socket rild-debug1 stream 660 radio system
+#    user root
+#    disabled
+#    group radio cache inet misc audio sdcard_r sdcard_rw qcom_oncrpc qcom_diag log
 
-on property:ro.multi.rild=true
-    start ril-daemon1
+#on property:ro.multi.rild=true
+#    start ril-daemon1
 
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
@@ -335,13 +338,13 @@ service iprenew_p2p /system/bin/dhcpcd -n p2p
     disabled
     oneshot
 
-service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
-    class late_start
-    disabled
+#service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+#    class late_start
+#    disabled
 
-service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
-    class late_start
-    disabled
+#service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
+#    class late_start
+#    disabled
 
 service qcamerasvr /system/bin/mm-qcamera-daemon
     class late_start
