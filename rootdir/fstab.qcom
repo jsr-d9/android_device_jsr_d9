@@ -10,5 +10,7 @@
 /dev/block/mmcblk0p17                  /system           ext4    ro,barrier=1                            wait
 /dev/block/mmcblk0p21                  /data             ext4    nosuid,nodev,noauto_da_alloc,barrier=1  wait,check,encryptable=footer,length=-16384
 
-/devices/platform/msm_sdcc.1/mmc_host  auto              auto    defaults                                voldmanaged=sdcard1:auto,noemulatedsd
-/devices/platform/msm_sdcc.3/mmc_host  auto              auto    defaults                                voldmanaged=sdcard0:20,noemulatedsd,nonremovable
+/devices/platform/msm_sdcc.1/mmc_host*   auto            auto    defaults                                voldmanaged=sdcard:auto,noemulatedsd,nonremovable
+#/devices/platform/msm_sdcc.3/mmc_host*  auto            auto    defaults                                voldmanaged=sdcard0:20,noemulatedsd,nonremovable
+
+/devices/platform/msm_hsusb_host.0/usb*  auto            auto    defaults                                voldmanaged=usb:auto

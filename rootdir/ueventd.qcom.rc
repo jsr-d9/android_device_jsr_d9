@@ -168,3 +168,6 @@
 /dev/dvb/adapter0/video*  0664  media      media
 
 /sys/devices/platform/mtk6252   usb_sel  0664  root  system
+
+/sys/devices/platform/msm_hsusb_host.0/usb* uevent 0660 root usb
+
