@@ -1,0 +1,25 @@
+From 536b603dcec84b544abe3b47b8dc8f2bea29e677 Mon Sep 17 00:00:00 2001
+From: remittor <remittor@gmail.com>
+Date: Thu, 17 Dec 2015 12:03:23 +0300
+Subject: [PATCH] bionic: Get rid of "has text relocations" warn messages
+
+---
+ linker/linker.cpp | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/linker/linker.cpp b/linker/linker.cpp
+index c81f5d3..e5a9777 100644
+--- a/linker/linker.cpp
++++ b/linker/linker.cpp
+@@ -3021,8 +3021,6 @@ bool soinfo::link_image(const soinfo_list_t& global_group, const soinfo_list_t&
+     }
+     // Make segments writable to allow text relocations to work properly. We will later call
+     // phdr_table_protect_segments() after all of them are applied and all constructors are run.
+-    DL_WARN("%s has text relocations. This is wasting memory and prevents "
+-            "security hardening. Please fix.", get_realpath());
+     if (phdr_table_unprotect_segments(phdr, phnum, load_bias) < 0) {
+       DL_ERR("can't unprotect loadable segments for \"%s\": %s",
+              get_realpath(), strerror(errno));
+-- 
+1.9.5.msysgit.0
+
