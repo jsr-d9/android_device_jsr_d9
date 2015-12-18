@@ -4,4 +4,11 @@
         <item>Внутренняя память</item>
         <item>SD карта</item>
     </string-array>
+    <string-array name="zram_names">
+        <item>Выкл.</item>
+        <item>64 Мб</item>
+        <item>128 Мб</item>
+        <item>256 Мб</item>
+        <item>512 Мб</item>
+    </string-array>
 </resources>

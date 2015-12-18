@@ -74,8 +74,14 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         ListPreference main_storage = (ListPreference)findPreference("main_storage");
         main_storage.setOnPreferenceChangeListener(this);
 
+        ListPreference zram_size = (ListPreference)findPreference("zram_size");
+        zram_size.setOnPreferenceChangeListener(this);
+
         int planned_swap = SystemProperties.getInt("persist.storages.planned_swap", 0);
         main_storage.setValue(String.valueOf(planned_swap));
+
+        int zram_planned_size = SystemProperties.getInt("persist.zram.planned_size", 0);
+        zram_size.setValue(String.valueOf(zram_planned_size));
     }
 
     @Override
@@ -83,6 +89,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     {
         if (preference.getKey().equals("main_storage")) {
             SystemProperties.set("persist.storages.planned_swap", (String)newValue);
+            Toast.makeText(getActivity(), R.string.reboot_needed, Toast.LENGTH_LONG).show();
+        }
+        if (preference.getKey().equals("zram_size")) {
+            SystemProperties.set("persist.zram.planned_size", (String) newValue);
             Toast.makeText(getActivity(), R.string.reboot_needed, Toast.LENGTH_LONG).show();
         }
         return true;

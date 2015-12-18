@@ -5,4 +5,6 @@
     <string name="reboot_needed">Перезагрузите телефон для применения настроек.</string>
     <string name="fail">Неизвестная ошибка.</string>
     <string name="storages_category">Память</string>
+    <string name="tuning_category">Производительность</string>
+    <string name="zram_title">ZRam</string>
 </resources>

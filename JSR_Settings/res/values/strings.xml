@@ -5,4 +5,6 @@
     <string name="reboot_needed">Please, reboot to apply changes.</string>
     <string name="fail">Unknown error.</string>
     <string name="storages_category">Storages</string>
+    <string name="tuning_category">Tuning</string>
+    <string name="zram_title">ZRam</string>
 </resources>

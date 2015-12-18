@@ -35,8 +35,13 @@ void init_msm_properties(unsigned long msm_id, unsigned long msm_ver, char * boa
 	if (dir) {
 		dir_fd = dirfd(dir);
 		while ((entry = readdir(dir)) != NULL) {
+			int skip = 1;
 			// we need to read this properties before load_persistent_properties()
-			if (strncmp("persist.storages.planned_swap", entry->d_name, strlen("persist.storages.planned_swap")))
+			if (!strncmp("persist.zram.planned_size", entry->d_name, strlen("persist.zram.planned_size")))
+				skip = 0;
+			if (!strncmp("persist.storages.planned_swap", entry->d_name, strlen("persist.storages.planned_swap")))
+				skip = 0;
+			if (skip)
 				continue;
 #if HAVE_DIRENT_D_TYPE
 			if (entry->d_type != DT_REG)
@@ -104,4 +109,13 @@ void init_msm_properties(unsigned long msm_id, unsigned long msm_ver, char * boa
 	}
 
 	mount("rootfs", "/", "rootfs", MS_REMOUNT|MS_RDONLY, NULL);
+
+	rc = property_get("persist.zram.planned_size", value);
+	if (!rc) {
+		property_set("persist.zram.size", "0");
+	} else {
+		if (atoi(value) > 0) {
+			property_set("persist.zram.size", value);
+		}
+	}
 }

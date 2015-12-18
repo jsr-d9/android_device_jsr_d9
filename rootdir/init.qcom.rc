@@ -395,3 +395,16 @@ service geomagneticd /system/bin/geomagneticd
 
 on property:sys.boot_completed=1
     write /sys/block/mmcblk0/queue/scheduler deadline
+
+on property:persist.zram.size=64
+    swapon_all fstab.zram_64
+
+on property:persist.zram.size=128
+    swapon_all fstab.zram_128
+
+on property:persist.zram.size=256
+    swapon_all fstab.zram_256
+
+on property:persist.zram.size=512
+    swapon_all fstab.zram_512
+

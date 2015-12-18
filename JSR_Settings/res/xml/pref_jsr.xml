@@ -7,7 +7,19 @@
             android:title="@string/main_storage_title"
             android:entries="@array/main_storage_names"
             android:entryValues="@array/main_storage_values"
-            android:defaultValue="int"
+            android:defaultValue="0"
+            android:summary="%s"
+            >
+        </ListPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/tuning_category">
+        <ListPreference
+            android:key="zram_size"
+            android:title="@string/zram_title"
+            android:entries="@array/zram_names"
+            android:entryValues="@array/zram_values"
+            android:defaultValue="0"
             android:summary="%s"
             >
         </ListPreference>
