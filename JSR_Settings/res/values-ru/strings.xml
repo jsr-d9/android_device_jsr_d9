@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<resources>
+    <string name="app_name">Дополнительно</string>
+    <string name="main_storage_title">Основная память</string>
+    <string name="reboot_needed">Перезагрузите телефон для применения настроек.</string>
+    <string name="fail">Неизвестная ошибка.</string>
+    <string name="storages_category">Память</string>
+</resources>

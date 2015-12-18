@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<resources>
+    <string name="app_name">Advanced settings</string>
+    <string name="main_storage_title">Main storage</string>
+    <string name="reboot_needed">Please, reboot to apply changes.</string>
+    <string name="fail">Unknown error.</string>
+    <string name="storages_category">Storages</string>
+</resources>

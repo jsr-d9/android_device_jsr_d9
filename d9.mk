@@ -26,6 +26,9 @@ PRODUCT_AAPT_PREF_CONFIG := hdpi
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
+# Custom APK
+PRODUCT_PACKAGES += JSR_Settings
+
 # ViewMem 
 PRODUCT_PACKAGES += viewmem
 
