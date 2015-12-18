@@ -1,0 +1,6 @@
+
+# EMMC
+/devices/platform/msm_sdcc.3/mmc_host    auto   auto   defaults   voldmanaged=sdcard0:20,noemulatedsd,nonremovable
+
+# ExtSD
+/devices/platform/msm_sdcc.1/mmc_host    auto   auto   defaults   voldmanaged=sdcard1:auto,noemulatedsd

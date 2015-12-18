@@ -33,7 +33,7 @@ TARGET_OTA_ASSERT_DEVICE := d9,msm8625_d9,msm8225_d9,Boost
 # Compile sys
 TARGET_GCC_VERSION_EXP := 4.8
 DISABLE_DEXPREOPT := true
-#TARGET_SPECIFIC_HEADER_PATH := device/jsr/d9/include
+TARGET_SPECIFIC_HEADER_PATH := device/jsr/d9/include
 
 # Compiler flags
 TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=softfp
@@ -96,6 +96,11 @@ BOARD_DATA_DEVICE := /dev/block/mmcblk0p21
 BOARD_DATA_FILESYSTEM := ext4
 BOARD_DATA_FILESYSTEM_OPTIONS := rw
 
+# Init
+BOARD_WANTS_EMMC_BOOT := true
+TARGET_INIT_VENDOR_LIB := libinit_msm
+TARGET_LIBINIT_DEFINES_FILE := device/jsr/d9/init/init_d9.c
+
 # Dalvik
 TARGET_ARCH_LOWMEM := true
 
@@ -151,7 +156,6 @@ TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
-BOARD_WANTS_EMMC_BOOT := true
 
 # RIL
 BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/

@@ -30,7 +30,9 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_PACKAGES += viewmem
 
 # Ramdisk
-PRODUCT_PACKAGES += fstab.qcom
+PRODUCT_PACKAGES += fstab.d9
+PRODUCT_PACKAGES += fstab.emmc
+PRODUCT_PACKAGES += fstab.extsd
 PRODUCT_PACKAGES += init.qcom.rc
 PRODUCT_PACKAGES += init.qcom.usb.rc
 PRODUCT_PACKAGES += init.target.rc
@@ -38,7 +40,9 @@ PRODUCT_PACKAGES += ueventd.qcom.rc
 PRODUCT_PACKAGES += init.qcom.ril.sh
 
 # Rootdir
-PRODUCT_PACKAGES += device/jsr/d9/rootdir/fstab.qcom:root/fstab.qcom
+PRODUCT_PACKAGES += device/jsr/d9/rootdir/fstab.s9:root/fstab.d9
+PRODUCT_PACKAGES += device/jsr/d9/rootdir/fstab.emmc:root/fstab.emmc
+PRODUCT_PACKAGES += device/jsr/d9/rootdir/fstab.extsd:root/fstab.extsd
 PRODUCT_PACKAGES += device/jsr/d9/rootdir/init.qcom.rc:root/init.qcom.rc
 PRODUCT_PACKAGES += device/jsr/d9/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc
 PRODUCT_PACKAGES += device/jsr/d9/rootdir/init.target.rc:root/init.target.rc

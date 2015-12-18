@@ -113,6 +113,9 @@ mm.enable.smoothstreaming=true
 # Newer camera API isn't supported.
 camera2.portability.force_api=1
 
+# uncomment for change primary storage eMMC to ExtSDCard
+#persist.storages.planned_swap=1
+
 # Low RAM
 ro.config.low_ram=true
 config.disable_atlas=true

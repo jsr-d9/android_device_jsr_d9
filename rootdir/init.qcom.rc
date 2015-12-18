@@ -26,7 +26,6 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-import init.target.rc
 import init.qcom.usb.rc
 
 on early-init
@@ -43,13 +42,8 @@ on init
     mkdir /storage/sdcard1 0000 system system
     mkdir /storage/sdcard0 0000 system system
 
-    export SECONDARY_STORAGE /storage/sdcard1
+    export SECONDARY_STORAGE /storage/sdcard1:/storage/usbdisk
     export EXTERNAL_STORAGE /storage/sdcard0
-
-    symlink /storage/sdcard1 /mnt/sdcard
-    symlink /storage/sdcard1 /sdcard
-    symlink /storage/sdcard0 /mnt/internal_sd
-    symlink /storage/sdcard0 /internal_sd
 
 on boot
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
@@ -206,10 +200,11 @@ on boot
     chown system system /sys/class/leds/flashlight/brightness
     chmod 0666 /sys/class/leds/flashlight/brightness
 
-on emmc-fs
+on early-fs
     # mount mmc partitions
-    mount_all /fstab.qcom
-    swapon_all /fstab.qcom
+    mount_all /fstab.d9
+
+    setprop ro.crypto.fuse_sdcard true
 
 # msm specific files that need to be created on /data
 on post-fs-data
@@ -340,6 +335,10 @@ service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0
     disabled
 
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
+    class late_start
+    disabled
+
+service fuse_usbdisk /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk /storage/usbdisk
     class late_start
     disabled
 
