@@ -1,0 +1,25 @@
+From e2bcc80209532b2cc9f631983b740bba66f09b87 Mon Sep 17 00:00:00 2001
+From: remittor <remittor@gmail.com>
+Date: Thu, 17 Dec 2015 19:23:42 +0300
+Subject: [PATCH] Add support msm7x27a
+
+---
+ init/Android.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/init/Android.mk b/init/Android.mk
+index edd6b7d..4d7e273 100644
+--- a/init/Android.mk
++++ b/init/Android.mk
+@@ -3,7 +3,7 @@ ifeq ($(TARGET_INIT_VENDOR_LIB),libinit_msm)
+ LOCAL_PATH := $(call my-dir)
+ LIBINIT_MSM_PATH := $(call my-dir)
+ 
+-LIBINIT_USE_MSM_DEFAULT := $(shell if [ ! -f $(LIBINIT_MSM_PATH)/init_$(TARGET_BOARD_PLATFORM).c ]; then echo true; fi)
++LIBINIT_USE_MSM_DEFAULT := false
+ 
+ include $(CLEAR_VARS)
+ LOCAL_MODULE_TAGS := optional
+-- 
+1.9.5.msysgit.0
+
