@@ -60,6 +60,10 @@ PRODUCT_PACKAGES += device/jsr/d9/rootdir/init.target.rc:root/init.target.rc
 PRODUCT_PACKAGES += device/jsr/d9/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc
 PRODUCT_PACKAGES += device/jsr/d9/rootdir/init.qcom.ril.sh:root/init.qcom.ril.sh
 
+# Charger
+PRODUCT_PACKAGES += charger
+PRODUCT_PACKAGES += charger_res_images
+
 # FM
 #PRODUCT_PACKAGES += FM2
 #PRODUCT_PACKAGES += FMRecord

@@ -221,6 +221,11 @@ on boot
     chown system system /sys/class/leds/flashlight/brightness
     chmod 0666 /sys/class/leds/flashlight/brightness
 
+on charger-fs
+    setprop ro.charger.delay 3
+    setprop ro.charger.power_key_code 107
+    setprop ro.charger.ust 2
+
 on early-fs
     # mount mmc partitions
     mount_all /fstab.d9
@@ -413,6 +418,9 @@ service geomagneticd /system/bin/geomagneticd
 #    class main
 #    user root
 #    oneshot
+
+service charger /charger
+    class charger
 
 on property:sys.boot_completed=1
     write /sys/block/mmcblk0/queue/scheduler deadline
