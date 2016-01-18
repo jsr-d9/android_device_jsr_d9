@@ -1,25 +1,27 @@
-From 4495f9a3a6b3f76b4987779898b40766d4909176 Mon Sep 17 00:00:00 2001
+From 53d05a8cb31a87eb5a360647f5b23d7e1834b3d8 Mon Sep 17 00:00:00 2001
 From: remittor <remittor@gmail.com>
-Date: Wed, 16 Dec 2015 13:10:51 +0300
+Date: Mon, 18 Jan 2016 14:20:32 +0300
 Subject: [PATCH] Add hook functions to post_process_props.py
 
 ---
- tools/post_process_props.py | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/post_process_props.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/tools/post_process_props.py b/tools/post_process_props.py
-index 5193d4b..e5d8966 100755
+index 64af01d..1daab0d 100755
 --- a/tools/post_process_props.py
 +++ b/tools/post_process_props.py
-@@ -15,6 +15,7 @@
+@@ -14,7 +14,8 @@
+ # See the License for the specific language governing permissions and
  # limitations under the License.
  
- import os, sys
+-import sys
++import os, sys
 +from post_process_props_hook import *
  
- # Usage: post_process_props.py file.prop [blacklist_key, ...]
- # Blacklisted keys are removed from the property file, if present
-@@ -129,8 +130,10 @@ def main(argv):
+ 
+ def iteritems(obj):
+@@ -136,8 +137,10 @@ def main(argv):
  
    if filename.endswith("/build.prop"):
      mangle_build_prop(properties, extraargs)
