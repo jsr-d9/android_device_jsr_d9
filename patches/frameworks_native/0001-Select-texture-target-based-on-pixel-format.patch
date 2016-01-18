@@ -1,4 +1,4 @@
-From fd546de4538bca8c4a4c52d82a10e53b555ee9c8 Mon Sep 17 00:00:00 2001
+From 49e937b9a994580536aa475a37a4c49bd5bf371e Mon Sep 17 00:00:00 2001
 From: Kyle Harrison <khwebmail@gmail.com>
 Date: Fri, 13 Feb 2015 20:16:18 +0000
 Subject: [PATCH] Select texture target based on pixel format
@@ -12,8 +12,6 @@ select between GL_EXTERNAL_TEXTURE_OES, and GL_TEXTURE_2D based
 on the pixel format.
 
 This change is done to reduce the composition time for 8x55
-
-Change-Id: I6675eec6802caa0f862dd551608e4cc92a6b61bb
 ---
  include/gui/GLConsumer.h                           |  6 ++++
  libs/gui/Android.mk                                |  4 +++
@@ -43,7 +41,7 @@ index c35c7be..3a63a0e 100644
      // EGLSlot contains the information and object references that
      // GLConsumer maintains about a BufferQueue buffer slot.
 diff --git a/libs/gui/Android.mk b/libs/gui/Android.mk
-index 8a965dd..be8b461 100644
+index 76aec6e..4d03def 100644
 --- a/libs/gui/Android.mk
 +++ b/libs/gui/Android.mk
 @@ -91,6 +91,10 @@ ifeq ($(TARGET_BOARD_PLATFORM), tegra3)
@@ -54,14 +52,14 @@ index 8a965dd..be8b461 100644
 +	LOCAL_CFLAGS += -DDECIDE_TEXTURE_TARGET
 +endif
 +
- include $(BUILD_SHARED_LIBRARY)
- 
- ifeq (,$(ONE_SHOT_MAKEFILE))
+ ifeq ($(TARGET_NO_SENSOR_PERMISSION_CHECK),true)
+ LOCAL_CPPFLAGS += -DNO_SENSOR_PERMISSION_CHECK
+ endif
 diff --git a/services/surfaceflinger/Android.mk b/services/surfaceflinger/Android.mk
-index b1fc73f..ae9e114 100644
+index c2b74ed..64f866e 100644
 --- a/services/surfaceflinger/Android.mk
 +++ b/services/surfaceflinger/Android.mk
-@@ -89,6 +89,10 @@ else
+@@ -90,6 +90,10 @@ else
      LOCAL_CFLAGS += -DMAX_VIRTUAL_DISPLAY_DIMENSION=0
  endif
  
@@ -73,10 +71,10 @@ index b1fc73f..ae9e114 100644
  LOCAL_CFLAGS += -std=c++11
  
 diff --git a/services/surfaceflinger/Layer.cpp b/services/surfaceflinger/Layer.cpp
-index bfd83e4..b0d6583 100644
+index 6dd8bad..0c90f55 100644
 --- a/services/surfaceflinger/Layer.cpp
 +++ b/services/surfaceflinger/Layer.cpp
-@@ -1314,8 +1314,14 @@ Region Layer::latchBuffer(bool& recomputeVisibleRegions)
+@@ -1371,8 +1371,14 @@ Region Layer::latchBuffer(bool& recomputeVisibleRegions)
              maxFrameNumber = mLastFrameNumberReceived;
          }
  
@@ -111,7 +109,7 @@ index 853a4eb..7295b6c 100644
  
  void GLES11RenderEngine::setupLayerBlackedOut() {
 diff --git a/services/surfaceflinger/SurfaceFlingerConsumer.cpp b/services/surfaceflinger/SurfaceFlingerConsumer.cpp
-index ed1f31b..4b976e0 100644
+index ed1f31b..006f83b 100644
 --- a/services/surfaceflinger/SurfaceFlingerConsumer.cpp
 +++ b/services/surfaceflinger/SurfaceFlingerConsumer.cpp
 @@ -27,13 +27,24 @@
@@ -143,7 +141,7 @@ index ed1f31b..4b976e0 100644
          return BUFFER_REJECTED;
      }
  
-+    #ifdef DECIDE_TEXTURE_TARGET
++#ifdef DECIDE_TEXTURE_TARGET
 +    // GPU is not efficient in handling GL_TEXTURE_EXTERNAL_OES
 +    // texture target. Depending on the image format, decide,
 +    // the texture target to be used
@@ -197,5 +195,5 @@ index 779e5b7..6394aae 100644
      // See GLConsumer::bindTextureImageLocked().
      status_t bindTextureImage();
 -- 
-2.6.1
+1.9.5.msysgit.0
 
