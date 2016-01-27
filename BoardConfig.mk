@@ -151,8 +151,8 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 BOARD_WANTS_EMMC_BOOT := true
 
 # RIL
-TARGET_RIL_VARIANT := caf
-#BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
+TARGET_RIL_VARIANT := legacy
+BOARD_RIL_CLASS := ../../../device/jsr/d9/ril/
 
 # Hardware
 BOARD_HARDWARE_CLASS := device/jsr/d9/cmhw
